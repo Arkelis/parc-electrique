@@ -1,0 +1,17 @@
+tables:
+  power_plants:
+    type: polygon
+    mapping:
+      power: [plant]
+    columns:
+    - {name: osm_id, type: id}
+    - {name: geometry, type: geometry}
+    - {key: 'plant:output:electricity', name: output, type: string}
+    - {key: 'plant:source', name: source, type: string}
+    - {key: name, name: name, type: string}
+    - {key: short_name, name: short_name, type: string}
+    - {key: wikipedia, name: wikipedia, type: string}
+    - {key: wikidata, name: wikidata, type: string}
+    - {key: operator, name: operator, type: string}
+    - {key: 'operator:wikidata', name: operator_wikidata, type: string}
+    - {key: 'operator:wikipedia', name: operator_wikipedia, type: string}

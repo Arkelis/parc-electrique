@@ -1,0 +1,25 @@
+[[providers]]
+name = "postgis"
+type = "mvt_postgis"
+uri = "postgresql://postgres@localhost:5432/osm"
+srid = 3857
+
+[[providers.layers]]
+name = "power_plants"
+sql = "SELECT osm_id as gid, ST_AsMVTGeom(ST_SimplifyPreserveTopology(geometry, !PIXEL_WIDTH! / 4), !BBOX!) as geom, name FROM import.osm_power_plants WHERE geometry && !BBOX!"
+geometry_type = "Polygon"
+
+[[providers.layers]]
+name = "power_plants_name"
+sql = "SELECT osm_id as gid, ST_AsMVTGeom(ST_Centroid(geometry), !BBOX!) AS geom, name FROM import.osm_power_plants WHERE normalize_power(output) > 1e9 AND geometry && !BBOX!"
+geometry_type = "Point"
+
+[[maps]]
+name = "parc-elec"
+center = [ 0.0, 0.0, 2.0,]
+
+[[maps.layers]]
+provider_layer = "postgis.power_plants"
+
+[[maps.layers]]
+provider_layer = "postgis.power_plants_name"
