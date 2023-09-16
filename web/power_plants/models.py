@@ -12,7 +12,7 @@ class PowerPlantManager(models.Manager):
 class PowerPlant(models.Model):
     # The composite primary key (osm_id, id) found, that is not supported.
     # The first column is selected.
-    id = models.AutoField()
+    id = models.BigIntegerField()
     osm_id = models.BigIntegerField(primary_key=True)
     output = models.CharField(blank=True, null=True)
     source = models.CharField(blank=True, null=True)
@@ -31,3 +31,6 @@ class PowerPlant(models.Model):
         managed = False
         db_table = "osm_power_plants"
         unique_together = (("osm_id", "id"),)
+    
+    def __str__(self):
+        return self.name or self.short_name or f"Centrale #{self.osm_id}"
