@@ -8,7 +8,7 @@ import "./style.css";
 const style = planIgn
 planIgn.layers = [...ignLayers, ...powerPlantsLayers]
 
-new Map({
+const map = new Map({
   container: "map", // container id
  // style: "https://demotiles.maplibre.org/style.json",
   style,
@@ -16,9 +16,12 @@ new Map({
   zoom: 5, // starting zoom
 });
 
-// map.on('load', () => {
-//   map.setLayoutProperty('power_plants_name', 'text-field', [
-//       'format',
-//       ['get', 'osm_id']
-//   ]);
-// });
+map.on('click', 'power_plants_area', (element) => {
+  if (element.features === undefined) return
+  const properties = element.features[0].properties
+  console.log(properties)
+  const plantClickedEvent = new CustomEvent("plantClicked", {detail: properties})
+  document.querySelector('body')?.dispatchEvent(plantClickedEvent)
+})
+
+document.querySelector('body')?.addEventListener('plantClicked', (event) => console.log(event))
