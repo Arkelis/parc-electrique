@@ -8,7 +8,7 @@ import "./style.css";
 const style = planIgn
 planIgn.layers = [...ignLayers, ...powerPlantsLayers]
 
-const map = new Map({
+new Map({
   container: "map", // container id
  // style: "https://demotiles.maplibre.org/style.json",
   style,

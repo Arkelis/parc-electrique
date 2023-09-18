@@ -10,10 +10,16 @@ packages = [{include = "parc_elec_fr"}]
 python = "^3.11"
 requests = "^2.31.0"
 loguru = "^0.7.0"
+django = "^4.2.5"
+dj-database-url = "^2.1.0"
+psycopg2 = "^2.9.7"
+ipython = "^8.15.0"
+aiohttp = {extras = ["speedups"], version = "^3.8.5"}
+sparqlwrapper = "^2.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.7.0"
+black = "^23.9.1"
 
 [build-system]
 requires = ["poetry-core"]

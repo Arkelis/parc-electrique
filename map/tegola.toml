@@ -6,12 +6,12 @@ srid = 3857
 
 [[providers.layers]]
 name = "power_plants"
-sql = "SELECT osm_id as gid, ST_AsMVTGeom(ST_SimplifyPreserveTopology(geometry, !PIXEL_WIDTH! / 4), !BBOX!) as geom, name FROM import.osm_power_plants WHERE geometry && !BBOX!"
+sql = "SELECT osm_id as gid, ST_AsMVTGeom(ST_SimplifyPreserveTopology(geometry, !PIXEL_WIDTH! / 4), !BBOX!) as geom, name FROM osm_power_plants WHERE geometry && !BBOX!"
 geometry_type = "Polygon"
 
 [[providers.layers]]
 name = "power_plants_name"
-sql = "SELECT osm_id as gid, ST_AsMVTGeom(ST_Centroid(geometry), !BBOX!) AS geom, name FROM import.osm_power_plants WHERE normalize_power(output) > 1e9 AND geometry && !BBOX!"
+sql = "SELECT osm_id as gid, ST_AsMVTGeom(ST_Centroid(geometry), !BBOX!) AS geom, name FROM osm_power_plants WHERE normalize_power(output) > 1e9 AND geometry && !BBOX!"
 geometry_type = "Point"
 
 [[maps]]

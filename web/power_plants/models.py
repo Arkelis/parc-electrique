@@ -1,12 +1,20 @@
 from django.contrib.gis.db import models
 from django.db.models.expressions import RawSQL
 
+from parc_elec.wikidata import fetch_eic_identifiers
+
 
 class PowerPlantManager(models.Manager):
+    def for_map(self):
+        return self.with_normalized_output().with_name()
+
     def with_normalized_output(self):
         qs = self.annotate(normalized_output=RawSQL("normalize_power(output)", ()))
         qs = qs.exclude(output__in=("", "yes", "no", "inconnu"))
         return qs
+    
+    def with_name(self):
+        return self.exclude(name='', short_name='')    
 
 
 class PowerPlant(models.Model):
@@ -34,3 +42,13 @@ class PowerPlant(models.Model):
     
     def __str__(self):
         return self.name or self.short_name or f"Centrale #{self.osm_id}"
+    
+    
+    @property
+    def eic_list(self):
+        """Energy identifier codes fetched from Wikidata"""
+        if not(self.wikidata):
+            return []
+        
+        return fetch_eic_identifiers(self.wikidata)
+
