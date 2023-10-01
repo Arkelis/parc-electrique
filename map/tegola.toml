@@ -11,8 +11,8 @@ SELECT
   osm_id as gid,
   name,
   source,
-  normalize_power(output) as output
-  ST_AsMVTGeom(ST_SimplifyPreserveTopology(geometry, !PIXEL_WIDTH! / 4), !BBOX!) as geom,
+  normalize_power(output) as output,
+  ST_AsMVTGeom(ST_SimplifyPreserveTopology(geometry, !PIXEL_WIDTH! / 4), !BBOX!) as geom
 FROM osm_power_plants
 WHERE geometry && !BBOX!
 """
@@ -25,8 +25,8 @@ SELECT
   osm_id as gid,
   name,
   source,
-  normalize_power(output) as output
-  ST_AsMVTGeom(ST_Centroid(geometry), !BBOX!) AS geom,
+  normalize_power(output) as output,
+  ST_AsMVTGeom(ST_Centroid(geometry), !BBOX!) AS geom
 FROM osm_power_plants
 WHERE normalize_power(output) > 1e9 AND geometry && !BBOX!
 """

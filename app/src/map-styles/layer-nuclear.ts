@@ -5,6 +5,7 @@ export const nuclearLayers = [
     "source-layer": "power_plants",
     type: "fill",
     minzoom: 10,
+    filter: ["==", "source", "nuclear"],
     paint: {
       "fill-antialias": true,
       "fill-color": "#198EC8",
@@ -17,6 +18,7 @@ export const nuclearLayers = [
     "source-layer": "power_plants",
     type: "line",
     minzoom: 10,
+    filter: ["==", "source", "nuclear"],
     paint: {
       "line-width": 3,
       "line-color": "#198EC8",
@@ -27,6 +29,7 @@ export const nuclearLayers = [
     source: "parc_elec",
     "source-layer": "power_plants_name",
     type: "symbol",
+    filter: ["==", "source", "nuclear"],
     layout: {
       "icon-allow-overlap": true,
       "icon-image": "atom",
@@ -39,6 +42,7 @@ export const nuclearLayers = [
     "source-layer": "power_plants_name",
     type: "symbol",
     minzoom: 7,
+    filter: ["==", "source", "nuclear"],
     layout: {
       "symbol-placement": "point",
       "text-field": "{name}",
