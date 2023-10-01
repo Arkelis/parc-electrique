@@ -1,0 +1,22 @@
+{
+  "version": 8,
+  "name": "PLAN IGN",
+  "metadata": { "maputnik:renderer": "mbgljs" },
+  "sources": {
+    "plan_ign": {
+      "type": "vector",
+      "tiles": [
+        "https://wxs.ign.fr/essentiels/geoportail/tms/1.0.0/PLAN.IGN/{z}/{x}/{y}.pbf"
+      ]
+    },
+    "parc_elec": {
+      "type": "vector",
+      "url": "http://localhost:8080/capabilities/parc-elec.json?debug=true"
+    }
+  },
+  "sprite": "https://wxs.ign.fr/static/vectorTiles/styles/PLAN.IGN/sprite/PlanIgn",
+  "glyphs": "https://wxs.ign.fr/static/vectorTiles/fonts/{fontstack}/{range}.pbf",
+  "transition": { "duration": 300, "delay": 0 },
+  "layers": [],
+  "id": "6lc64jimd"
+}
