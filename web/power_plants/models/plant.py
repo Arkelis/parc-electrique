@@ -61,7 +61,6 @@ class PowerPlant(models.Model):
     def __str__(self):
         return self.name or self.short_name or f"Centrale #{self.osm_id}"
 
-    @property
     def eic_list(self):
         """Energy identifier codes fetched from Wikidata"""
         if not (self.wikidata):
@@ -80,6 +79,5 @@ class PowerPlant(models.Model):
 
     @property
     def production_mode(self):
-        sources = self.source.split(";")
-        display_sources = map(lambda s: POWER_PLANT_SOURCES[s], sources)
+        display_sources = (POWER_PLANT_SOURCES[s] for s in self.source.split(';'))
         return ", ".join(display_sources)

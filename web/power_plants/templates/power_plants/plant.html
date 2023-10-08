@@ -4,6 +4,8 @@
     <img class="w-12 h-12" src="http://localhost:5173/sprite/atom.png">
     <h2 class="text-lg font-bold uppercase">{{ plant.name }}</h2>
 </div>
+
+<h3 class="font-bold text-l mt-4">Informations générales</h3>
 <p>Mode de production : {{ plant.production_mode }}</p>
 <p>Puissance installée : {{ plant.output }}</p>
 
@@ -13,4 +15,28 @@
 
 {% if plant.wikidata %}
 <p><a href="{{ plant.wikidata_url }}" target="_blank" class="underline">Voir sur Wikidata</a></p>
+{% endif %}
+
+{% if plant.eic_list %}
+<!-- <p>Codes EIC
+    <ul>
+        {% for code in plant.eic_list %}
+        <li>{{ code }}</li>
+        {% endfor %}
+    </ul>
+</p> -->
+
+<h3 class="font-bold text-l mt-4">Tranches</h3>
+<ul>
+    {% for capacity in capacities %}
+    <li>{{ capacity.name }} - {{ capacity.output }} MW</li>
+    {% endfor %}
+</ul>
+
+<h3 class="font-bold text-l mt-4">Production</h3>
+<ul>
+    {% for prod in production %}
+    <li>{{ prod.eic }} - {{ prod.values }} MW</li>
+    {% endfor %}
+</ul>
 {% endif %}

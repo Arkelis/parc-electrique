@@ -4,5 +4,5 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("plant/<int:gid>", views.plant, name="plant"),
+    path("plant/<int:osm_id>", views.plant, name="plant"),
 ]

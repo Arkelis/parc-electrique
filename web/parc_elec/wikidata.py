@@ -27,16 +27,16 @@ def fetch_eic_identifiers(q: str):
     Return a list of str.
     """
     query = """
-        SELECT ?code_d_identification_énergie WHERE {
-        VALUES ?item { wd:Q1739407 }
-        OPTIONAL { ?item wdt:P8645 ?code_d_identification_énergie. }
-        }
+        SELECT ?code_d_identification_énergie WHERE {{
+        VALUES ?item {{ wd:{q} }}
+        OPTIONAL {{ ?item wdt:P8645 ?code_d_identification_énergie. }}
+        }}
     """
     cache_key = f'wd:{q}:eic'
     if cached_value := cache.get(cache_key):
         return cached_value
 
-    wikidata_payload = _get_results_from_wikidata(query)
+    wikidata_payload = _get_results_from_wikidata(query.format(q=q))
     identifiers = [binding['code_d_identification_énergie']['value']
                    for binding in wikidata_payload['results']['bindings']]
     cache.set(cache_key, identifiers, 3600 * 24)
