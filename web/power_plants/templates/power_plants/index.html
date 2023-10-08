@@ -8,9 +8,11 @@
   <title>Géowatt - Parc français de production d'électricité</title>
 </head>
 
-<body>
+<body class="font-sans">
   <div class="grid grid-cols-[25rem,_1fr] grid-rows-1 h-screen items-stretch">
-    <section class="shadow-xl z-10" id="app"></section>
+    <section id="panel" class="shadow-xl z-10 p-4" id="app">
+      <h1 class="text-3xl font-light">Géowatt</h1>
+    </section>
     <section id="map" class="cursor-grabbing"></section>
   </div>
   <script type="module" src="http://localhost:5173/@vite/client"></script>

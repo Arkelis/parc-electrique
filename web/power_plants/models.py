@@ -12,9 +12,27 @@ class PowerPlantManager(models.Manager):
         qs = self.annotate(normalized_output=RawSQL("normalize_power(output)", ()))
         qs = qs.exclude(output__in=("", "yes", "no", "inconnu"))
         return qs
-    
+
     def with_name(self):
-        return self.exclude(name='', short_name='')    
+        return self.exclude(name="", short_name="")
+
+
+POWER_PLANT_SOURCES = {
+    "nuclear": "nucléaire",
+    "gas": "gaz",
+    "oil": "fioul",
+    "biofuel": "bio-carburant",
+    "diesel": "diesel",
+    "biomass": "biomasse",
+    "geothermal": "géothermique",
+    "wind": "éolien",
+    "solar": "solaire",
+    "waste": "incinération",
+    "coal": "charbon",
+    "wood": "bois",
+    "hydro": "hydraulique",
+    "battery": "batteries",
+}
 
 
 class PowerPlant(models.Model):
@@ -39,16 +57,29 @@ class PowerPlant(models.Model):
         managed = False
         db_table = "osm_power_plants"
         unique_together = (("osm_id", "id"),)
-    
+
     def __str__(self):
         return self.name or self.short_name or f"Centrale #{self.osm_id}"
-    
-    
+
     @property
     def eic_list(self):
         """Energy identifier codes fetched from Wikidata"""
-        if not(self.wikidata):
+        if not (self.wikidata):
             return []
-        
+
         return fetch_eic_identifiers(self.wikidata)
 
+    @property
+    def wikipedia_url(self):
+        page = self.wikipedia.removeprefix("fr:")
+        return f"https://fr.wikipedia.org/wiki/{page}"
+
+    @property
+    def wikidata_url(self):
+        return f"https://wikidata.org/wiki/{self.wikidata}"
+
+    @property
+    def production_mode(self):
+        sources = self.source.split(";")
+        display_sources = map(lambda s: POWER_PLANT_SOURCES[s], sources)
+        return ", ".join(display_sources)

@@ -1,0 +1,16 @@
+<p class="font-sans text-sm mb-2">Géowatt / Nucléaire</p>
+
+<div class="flex gap-2 items-center mb-4">
+    <img class="w-12 h-12" src="http://localhost:5173/sprite/atom.png">
+    <h2 class="text-lg font-bold uppercase">{{ plant.name }}</h2>
+</div>
+<p>Mode de production : {{ plant.production_mode }}</p>
+<p>Puissance installée : {{ plant.output }}</p>
+
+{% if plant.wikipedia %}
+<p><a href="{{ plant.wikipedia_url }}" target="_blank" class="underline">Voir sur Wikipédia</a></p>
+{% endif %}
+
+{% if plant.wikidata %}
+<p><a href="{{ plant.wikidata_url }}" target="_blank" class="underline">Voir sur Wikidata</a></p>
+{% endif %}

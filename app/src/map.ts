@@ -1,7 +1,8 @@
 import { Map } from "maplibre-gl";
-import style from './map-styles/style.json'
-import ignLayers from './map-styles/layer-ign.json'
-import { nuclearLayers } from './map-styles/layer-nuclear'
+import style from "./map-styles/style.json";
+import ignLayers from "./map-styles/layer-ign.json";
+import { nuclearLayers } from "./map-styles/layer-nuclear";
+import * as htmx from "htmx.org";
 
 import "./style.css";
 
@@ -13,7 +14,7 @@ const map = new Map({
   style,
   center: [3, 47.2],
   zoom: 5, // starting zoom
-  antialias: true
+  antialias: true,
 });
 
 map.on("load", () => {
@@ -22,19 +23,25 @@ map.on("load", () => {
     map.addImage("atom", image);
   });
 
-  nuclearLayers.forEach(layer => map.addLayer(layer))
-});
+  nuclearLayers.forEach((layer) => map.addLayer(layer));
 
-map.on("click", "power_plants_area", (element) => {
-  if (element.features === undefined) return;
-  const properties = element.features[0].properties;
-  console.log(properties);
-  const plantClickedEvent = new CustomEvent("plantClicked", {
-    detail: properties,
+  const nuclearLayerIcons = ["power_plants_icon"];
+
+  nuclearLayerIcons.forEach((layerName) => {
+    map.on("click", layerName, (element) => {
+      if (element.features === undefined) return;
+      const properties = element.features[0].properties;
+      htmx.ajax("get", `/plant/${properties.gid}`, "#panel");
+    });
+
+    map.on("mouseenter", layerName, (element) => {
+      console.log("ENTER", layerName);
+      map.getCanvas().style.cursor = "pointer";
+    });
+
+    map.on("mouseleave", layerName, (element) => {
+      console.log("LEAVE", layerName);
+      map.getCanvas().style.cursor = "grab";
+    });
   });
-  document.querySelector("body")?.dispatchEvent(plantClickedEvent);
 });
-
-document
-  .querySelector("body")
-  ?.addEventListener("plantClicked", (event) => console.log(event));
