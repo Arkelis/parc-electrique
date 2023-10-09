@@ -34,9 +34,50 @@
 </ul>
 
 <h3 class="font-bold text-l mt-4">Production</h3>
-<ul>
+<canvas id="production-graph"></canvas>
+<!-- <ul>
     {% for prod in production %}
-    <li>{{ prod.eic }} - {{ prod.values }} MW</li>
+    <li>{{ prod.name }} - {{ prod.values }} MW</li>
     {% endfor %}
-</ul>
+</ul> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"
+    integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    var labels = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
+    ];
+
+    new Chart(
+        document.getElementById('production-graph'),
+        {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'ST LAURENT 1',
+                        data: [1287.5, 1287, 1288, 1287.5, 1288, 1288, 1288.5, 1289],
+                        fill: 'stack',
+                    },
+                    {
+                        label: 'ST LAURENT 2',
+                        data: [1281, 1281, 1282, 1281, 1281, 1281, 1282, 1282],
+                        fill: 'stack',
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        ticks: {
+                            callback: val => `${val} MW`,
+                        }
+                    }
+                }
+            }
+        }
+    );
+</script>
 {% endif %}

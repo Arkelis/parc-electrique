@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.db import transaction
 
 from parc_elec import rte
 
@@ -11,6 +12,7 @@ class PowerProductionManager(models.Manager):
 class PowerProduction(models.Model):
     id = models.AutoField(primary_key=True)
     eic = models.CharField()
+    name = models.CharField()
     values = models.JSONField()
 
     @classmethod
@@ -22,9 +24,11 @@ class PowerProduction(models.Model):
 
 class PowerProductionImport:
     def bulk_create(self):
-        PowerProduction.objects.bulk_create(
-            PowerProduction(**row) for row in self.get_rows()
-        )
+        with transaction.atomic():
+            PowerProduction.objects.all().delete()
+            PowerProduction.objects.bulk_create(
+                PowerProduction(**row) for row in self.get_rows()
+            )
 
     def get_rows(self):
         data = self.fetch_data_from_rte()
@@ -41,6 +45,7 @@ class PowerProductionImport:
     def parse_row(data):
         return {
             "eic": data["unit"]["eic_code"],
+            "name": data["unit"]["name"],
             "values": [
                 {"date": row["end_date"], "value": row["value"]}
                 for row in data["values"]

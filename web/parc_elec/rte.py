@@ -33,6 +33,10 @@ def fetch_current_production():
         headers={"Authorization": f"Bearer {token}"},
     )
 
+    logger.debug("Response status:", response.status_code)
+    if response.status_code != 200:
+        return
+
     logger.debug("Production data fetched")
 
     return response.json()
@@ -47,10 +51,10 @@ def fetch_current_installed_capacity():
         headers={"Authorization": f"Bearer {token}"},
     )
 
+    logger.debug(f"Response status: {response.status_code}")
+    if response.status_code != 200:
+        return
+
     logger.debug("Installed data fetched")
 
     return response.json()
-
-
-if __name__ == "__main__":
-    fetch_current_installed_capacity()
