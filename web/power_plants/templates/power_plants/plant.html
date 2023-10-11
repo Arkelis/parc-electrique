@@ -34,7 +34,10 @@
 </ul>
 
 <h3 class="font-bold text-l mt-4">Production</h3>
-<canvas id="production-graph"></canvas>
+<p>Puissance délivrée en MW par tranche lors des huit dernières heures</p>
+<div class="h-[300px] py-4">
+    <canvas id="production-graph"></canvas>
+</div>
 <!-- <ul>
     {% for prod in production %}
     <li>{{ prod.name }} - {{ prod.values }} MW</li>
@@ -44,9 +47,10 @@
     integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    var labels = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
+    var labels = ['0h', '1h', '2h', '3h', '4h', '5h', '6h', '7h',
     ];
 
+    Chart.defaults.font.family = '"Source Sans 3"'
     new Chart(
         document.getElementById('production-graph'),
         {
@@ -67,12 +71,23 @@
                 ]
             },
             options: {
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
                 scales: {
                     y: {
                         stacked: true,
                         beginAtZero: true,
-                        ticks: {
-                            callback: val => `${val} MW`,
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 16,
+                            padding: 16,
                         }
                     }
                 }
