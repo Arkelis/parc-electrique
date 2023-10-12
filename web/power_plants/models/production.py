@@ -1,3 +1,6 @@
+from datetime import datetime
+import json
+
 from django.contrib.gis.db import models
 from django.db import transaction
 
@@ -20,6 +23,34 @@ class PowerProduction(models.Model):
         PowerProductionImport().bulk_create()
 
     objects = PowerProductionManager()
+
+    @classmethod
+    async def as_dataset(cls, eic):
+        instances = await cls.objects.eic(eic)
+
+        if not instances:
+            return json.dumps({"datasets": [], "labels": []})
+
+        return {
+            "datasets": [
+                {"label": i.name, "data": i.values_list, "fill": "stack"}
+                for i in instances
+            ],
+            "labels": instances[0].values_list,
+        }
+
+    @property
+    def values_list(self):
+        return [element["value"] for element in self.values]
+
+    @property
+    def labels_list(self):
+        return [self.datetime_to_hour(element["end_date"]) for element in self.values]
+
+    @staticmethod
+    def datetime_to_hour(dt_string):
+        dt = datetime.fromisoformat(dt_string)
+        return dt.strftime("%Hh").removeprefix("0")
 
 
 class PowerProductionImport:

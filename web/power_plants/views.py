@@ -13,7 +13,7 @@ async def index(request: HttpRequest):
 async def plant(request: HttpRequest, osm_id: int):
     plant = await PowerPlant.objects.aget(osm_id=osm_id)
     capacities = await PowerCapacity.objects.eic(plant.eic_list())
-    production = await PowerProduction.objects.eic(plant.eic_list())
+    production = await PowerProduction.as_dataset(plant.eic_list())
     response = render(
         request,
         "power_plants/plant.html",
