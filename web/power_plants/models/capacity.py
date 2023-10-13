@@ -3,9 +3,9 @@ from django.contrib.gis.db import models
 from parc_elec import rte
 
 
-class PowerPlantManager(models.Manager):
-    async def eic(self, eic_list):
-        return [c async for c in self.filter(eic__in=eic_list)]
+class PowerCapacityManager(models.Manager):
+    def eic(self, eic_list):
+        return self.filter(eic__in=eic_list)
 
 
 class PowerCapacity(models.Model):
@@ -19,7 +19,7 @@ class PowerCapacity(models.Model):
     def import_from_rte(cls):
         PowerCapacityImport().bulk_create()
     
-    objects = PowerPlantManager()
+    objects = PowerCapacityManager()
 
 
 

@@ -1,5 +1,4 @@
 from datetime import datetime
-import json
 
 from django.contrib.gis.db import models
 from django.db import transaction
@@ -7,9 +6,21 @@ from django.db import transaction
 from parc_elec import rte
 
 
-class PowerProductionManager(models.Manager):
-    async def eic(self, eic_list):
-        return [c async for c in self.filter(eic__in=eic_list)]
+class PowerProductionQuerySet(models.QuerySet):
+    def eic(self, eic_list):
+        return self.filter(eic__in=eic_list)
+
+    def as_chart_payload(self):
+        if not self:
+            return {"datasets": [], "labels": []}
+
+        return {
+            "datasets": [
+                {"label": i.name, "data": i.values_list, "fill": "stack"}
+                for i in self.iterator()
+            ],
+            "labels": self.first().labels_list,
+        }
 
 
 class PowerProduction(models.Model):
@@ -22,30 +33,15 @@ class PowerProduction(models.Model):
     def import_from_rte(cls):
         PowerProductionImport().bulk_create()
 
-    objects = PowerProductionManager()
-
-    @classmethod
-    async def as_dataset(cls, eic):
-        instances = await cls.objects.eic(eic)
-
-        if not instances:
-            return json.dumps({"datasets": [], "labels": []})
-
-        return {
-            "datasets": [
-                {"label": i.name, "data": i.values_list, "fill": "stack"}
-                for i in instances
-            ],
-            "labels": instances[0].values_list,
-        }
+    objects = PowerProductionQuerySet.as_manager()
 
     @property
     def values_list(self):
-        return [element["value"] for element in self.values]
+        return [abs(element["value"]) for element in self.values]
 
     @property
     def labels_list(self):
-        return [self.datetime_to_hour(element["end_date"]) for element in self.values]
+        return [self.datetime_to_hour(element["date"]) for element in self.values]
 
     @staticmethod
     def datetime_to_hour(dt_string):

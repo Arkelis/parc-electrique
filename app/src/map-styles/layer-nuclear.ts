@@ -47,7 +47,7 @@ export const nuclearLayers = [
       "symbol-placement": "point",
       "text-field": "{name}",
       "text-offset": [0, 1.7],
-      "text-size": ["interpolate", ["linear"], ["zoom"], 9, 10, 18, 15],
+      "text-size": ["interpolate", ["linear"], ["zoom"], 9, 12, 18, 15],
       "text-anchor": "top",
       "text-keep-upright": true,
       "text-max-angle": 45,
