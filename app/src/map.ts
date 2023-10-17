@@ -2,11 +2,13 @@ import { Map } from "maplibre-gl";
 import style from "./map-styles/style.json";
 import ignLayers from "./map-styles/layer-ign.json";
 import { nuclearLayers } from "./map-styles/layer-nuclear";
+import { hydroLayers } from "./map-styles/layer-hydro";
 import * as htmx from "htmx.org";
 
 import "./style.css";
 
 style.layers = ignLayers;
+const icons = ["atom", "water"];
 
 const map = new Map({
   container: "map", // container id
@@ -18,11 +20,17 @@ const map = new Map({
 });
 
 map.on("load", () => {
-  map.loadImage("http://localhost:5173/sprite/atom.png", (_, image) => {
-    if (!image) return;
-    map.addImage("atom", image);
-  });
+  icons.forEach((iconName) =>
+    map.loadImage(
+      `http://localhost:5173/sprite/${iconName}.png`,
+      (_, image) => {
+        if (!image) return;
+        map.addImage(iconName, image);
+      }
+    )
+  );
 
+  hydroLayers.forEach((layer) => map.addLayer(layer));
   nuclearLayers.forEach((layer) => map.addLayer(layer));
 
   const nuclearLayerIcons = ["power_plants_icon"];
