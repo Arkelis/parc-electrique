@@ -67,6 +67,10 @@ class PowerPlant(models.Model):
             return []
 
         return fetch_eic_identifiers(self.wikidata)
+    
+    @property
+    def openstreetmap_url(self):
+        return f"https://openstreetmap.org/way/{self.osm_id}"
 
     @property
     def wikipedia_url(self):

@@ -1,4 +1,4 @@
-<p class="font-sans text-sm mb-2">Géowatt / Nucléaire</p>
+<p class="font-sans text-sm mb-2">Géowatt / <span class="capitalize" >{{ plant.production_mode }}</span></p>
 
 <div class="flex gap-2 items-center mb-4">
     <img class="w-12 h-12" src="http://localhost:5173/sprite/atom.png">
@@ -9,6 +9,8 @@
 <p>Mode de production : {{ plant.production_mode }}</p>
 <p>Puissance installée : {{ plant.output }}</p>
 
+<p><a href="{{ plant.openstreetmap_url }}" target="_blank" class="underline">Voir sur OpenStreetMap</a></p>
+
 {% if plant.wikipedia %}
 <p><a href="{{ plant.wikipedia_url }}" target="_blank" class="underline">Voir sur Wikipédia</a></p>
 {% endif %}
@@ -18,14 +20,6 @@
 {% endif %}
 
 {% if plant.eic_list %}
-<!-- <p>Codes EIC
-    <ul>
-        {% for code in plant.eic_list %}
-        <li>{{ code }}</li>
-        {% endfor %}
-    </ul>
-</p> -->
-
 <h3 class="font-bold text-l mt-4">Tranches</h3>
 <ul>
     {% for capacity in capacities %}
@@ -40,11 +34,6 @@
 <div class="h-[300px] py-4">
     <canvas id="production-graph"></canvas>
 </div>
-<!-- <ul>
-    {% for prod in production %}
-    <li>{{ prod.name }} - {{ prod.values }} MW</li>
-    {% endfor %}
-</ul> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"
     integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>

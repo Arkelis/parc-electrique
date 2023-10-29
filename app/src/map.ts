@@ -1,14 +1,14 @@
 import { Map } from "maplibre-gl";
 import style from "./map-styles/style.json";
 import ignLayers from "./map-styles/layer-ign.json";
-import { nuclearLayers } from "./map-styles/layer-nuclear";
-import { hydroLayers } from "./map-styles/layer-hydro";
+import { energyLayers } from "./map-styles/energy-layers";
 import * as htmx from "htmx.org";
 
 import "./style.css";
 
+const icons = ["atom", "water", "fire", "wind", "sun", "electricity"];
+
 style.layers = ignLayers;
-const icons = ["atom", "water"];
 
 const map = new Map({
   container: "map", // container id
@@ -30,26 +30,20 @@ map.on("load", () => {
     )
   );
 
-  hydroLayers.forEach((layer) => map.addLayer(layer));
-  nuclearLayers.forEach((layer) => map.addLayer(layer));
+  energyLayers().forEach((layer) => map.addLayer(layer));
 
-  const nuclearLayerIcons = ["power_plants_icon"];
+  map.on("click", "power_plants_icon", (element) => {
+    if (element.features === undefined) return;
+    const properties = element.features[0].properties;
+    console.log(properties);
+    htmx.ajax("get", `/plant/${properties.gid}`, "#panel");
+  });
 
-  nuclearLayerIcons.forEach((layerName) => {
-    map.on("click", layerName, (element) => {
-      if (element.features === undefined) return;
-      const properties = element.features[0].properties;
-      htmx.ajax("get", `/plant/${properties.gid}`, "#panel");
-    });
+  map.on("mouseenter", "power_plants_icon", () => {
+    map.getCanvas().style.cursor = "pointer";
+  });
 
-    map.on("mouseenter", layerName, (element) => {
-      console.log("ENTER", layerName);
-      map.getCanvas().style.cursor = "pointer";
-    });
-
-    map.on("mouseleave", layerName, (element) => {
-      console.log("LEAVE", layerName);
-      map.getCanvas().style.cursor = "grab";
-    });
+  map.on("mouseleave", "power_plants_icon", () => {
+    map.getCanvas().style.cursor = "grab";
   });
 });
