@@ -14,7 +14,7 @@ const map = new Map({
   container: "map", // container id
   // style: "https://demotiles.maplibre.org/style.json",
   style,
-  center: [3, 47.2],
+  center: [5, 47.2],
   zoom: 5, // starting zoom
   antialias: true,
 });
@@ -36,7 +36,9 @@ map.on("load", () => {
     if (element.features === undefined) return;
     const properties = element.features[0].properties;
     console.log(properties);
-    htmx.ajax("get", `/plant/${properties.gid}`, "#panel");
+    const plantUrl = `/plant/${properties.gid}`
+    htmx.ajax("get", plantUrl, "#panel");
+    history.pushState(null, '', plantUrl)
   });
 
   map.on("mouseenter", "power_plants_icon", () => {
@@ -47,3 +49,8 @@ map.on("load", () => {
     map.getCanvas().style.cursor = "grab";
   });
 });
+
+window.addEventListener('popstate', function (ev) {
+  htmx.ajax("get", document.location.href, "#panel");
+});
+

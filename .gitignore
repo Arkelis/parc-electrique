@@ -4,3 +4,4 @@
 *.txt
 .idea/
 __pycache__/
+*.pbf

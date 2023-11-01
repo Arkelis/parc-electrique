@@ -1,7 +1,10 @@
-<p class="font-sans text-sm mb-2">Géowatt / <span class="capitalize" >{{ plant.production_mode }}</span></p>
+<p class="font-sans text-sm mb-2">
+    <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
+    / <span class="capitalize">{{ plant.production_mode }}</span>
+</p>
 
 <div class="flex gap-2 items-center mb-4">
-    <img class="w-12 h-12" src="http://localhost:5173/sprite/atom.png">
+    <img class="w-12 h-12" src="http://localhost:5173/sprite/{{ plant.icon }}.png">
     <h2 class="text-lg font-bold uppercase">{{ plant.name }}</h2>
 </div>
 

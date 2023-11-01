@@ -34,6 +34,27 @@ POWER_PLANT_SOURCES = {
     "battery": "batteries",
 }
 
+POWER_PLANT_FAMILIES = {
+    "nuclear": "nuclear",
+    "oil": "fossil",
+    "gas": "fossil",
+    "coal": "fossil",
+    "hydro": "hydro",
+    "tidal": "hydro",
+    "wind": "wind",
+    "solar": "solar",
+    "waste": "fossil"
+}
+
+ENERGY_STYLES = {
+    "fossil": {"icon": "fire", "color": "#d11500"},
+    "nuclear": {"icon": "atom", "color": "#880dbd"},
+    "hydro": {"icon": "water", "color": "#198EC8"},
+    "wind": {"icon": "wind", "color": "#118c06"},
+    "solar": {"icon": "sun", "color": "#f1b31c"},
+    "electricity": {"icon": "electricity", "color": "#828282"},
+}
+
 
 class PowerPlant(models.Model):
     # The composite primary key (osm_id, id) found, that is not supported.
@@ -67,7 +88,16 @@ class PowerPlant(models.Model):
             return []
 
         return fetch_eic_identifiers(self.wikidata)
-    
+
+    def _sources_as_list(self):
+        return self.source.split(";")
+
+    @property
+    def icon(self):
+        main_source = self._sources_as_list()[0]
+        energy_family = POWER_PLANT_FAMILIES.get(main_source, "electricity")
+        return ENERGY_STYLES[energy_family]["icon"]
+
     @property
     def openstreetmap_url(self):
         return f"https://openstreetmap.org/way/{self.osm_id}"
@@ -83,5 +113,5 @@ class PowerPlant(models.Model):
 
     @property
     def production_mode(self):
-        display_sources = (POWER_PLANT_SOURCES[s] for s in self.source.split(';'))
+        display_sources = (POWER_PLANT_SOURCES[s] for s in self._sources_as_list())
         return ", ".join(display_sources)

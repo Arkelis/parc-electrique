@@ -1,41 +1,31 @@
-const energyStyles = {
-  fossil: { icon: "fire", color: "#f1b31c" },
-  nuclear: { icon: "atom", color: "#198EC8" },
-  hydro: { icon: "water", color: "#198EC8" },
-  wind: { icon: "wind", color: "#198EC8" },
-  solar: { icon: "sun", color: "#f1b31c" },
-};
+type EnergyFamily = "fossil" | "nuclear" | "hydro" | "wind" | "solar";
 
-const energyFamilies = {
-  nuclear: 'nuclear',
-  oil: 'fossil',
-  gas: 'fossil',
-  coal: 'fossil',
-  hydro: 'hydro',
-  tidal: 'hydro',
-  wind: 'wind',
-  solar: 'solar'
-}
+const energyStyles: Record<EnergyFamily, { icon: string; color: string }> =
+  JSON.parse(document.getElementById("energy-styles")?.innerText ?? "{}");
+
+const energyFamilies: Record<string, EnergyFamily> = JSON.parse(
+  document.getElementById("energy-families")?.innerText ?? "{}"
+);
 
 const colorExpression = () => {
-  const base = ["match", ["get", "source"]]
+  const base = ["match", ["get", "source"]];
   for (const energy in energyFamilies) {
-    base.push(energy)
-    base.push(energyStyles[energyFamilies[energy]].color)
+    base.push(energy);
+    base.push(energyStyles[energyFamilies[energy]].color);
   }
-  base.push('#198EC8')
-  return base
-}
+  base.push("#828282"); // default color
+  return base;
+};
 
 const iconExpression = () => {
-  const base = ["match", ["get", "source"]]
+  const base = ["match", ["get", "source"]];
   for (const energy in energyFamilies) {
-    base.push(energy)
-    base.push(energyStyles[energyFamilies[energy]].icon)
+    base.push(energy);
+    base.push(energyStyles[energyFamilies[energy]].icon);
   }
-  base.push('electricity')
-  return base
-}
+  base.push("electricity");
+  return base;
+};
 
 export const energyLayers = () => {
   return [
@@ -67,9 +57,14 @@ export const energyLayers = () => {
       source: "parc_elec",
       "source-layer": "power_plants_name",
       type: "circle",
+      filter: [
+        "all",
+        ["<", ["zoom"], 9],
+        ["<=", ["get", "output"], 1000000000],
+      ],
       paint: {
         "circle-color": colorExpression(),
-        "circle-radius": 3,
+        "circle-radius": ["interpolate", ["linear"], ["zoom"], 7, 3, 10, 9],
         "circle-opacity": 0.7,
       },
     },
