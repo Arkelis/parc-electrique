@@ -18,9 +18,8 @@ class PowerCapacity(models.Model):
     @classmethod
     def import_from_rte(cls):
         PowerCapacityImport().bulk_create()
-    
-    objects = PowerCapacityManager()
 
+    objects = PowerCapacityManager()
 
 
 class PowerCapacityImport:

@@ -4,14 +4,16 @@ from django.http.request import HttpRequest
 from power_plants.models import PowerPlant
 from power_plants.models import PowerCapacity
 from power_plants.models import PowerProduction
+from power_plants.models import PowerMix
 from power_plants.models.plant import ENERGY_STYLES, POWER_PLANT_FAMILIES
 
 
 def index(request: HttpRequest):
+    mix = PowerMix.objects.all_types().as_chart_payload()
     return render(
         request,
         "power_plants/index.html" if request.htmx else "power_plants/index.page.html",
-        context={"families": POWER_PLANT_FAMILIES, "styles": ENERGY_STYLES},
+        context={"families": POWER_PLANT_FAMILIES, "styles": ENERGY_STYLES, "mix": mix},
     )
 
 

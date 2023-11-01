@@ -1,1 +1,45 @@
+{{ mix.labels | json_script:"chart-labels" }}
+{{ mix.datasets | json_script:"chart-datasets" }}
+
 <h1 class="text-3xl font-light">Géowatt</h1>
+<h3 class="font-bold text-l mt-4">Mix énergétique français</h3>
+<p>Puissance délivrée en MW par type de production lors des huit dernières heures</p>
+<div class="h-[500px] py-4">
+    <canvas id="mix-graph"></canvas>
+</div>
+<script>
+    Chart.defaults.font.family = '"Source Sans 3"'
+    new Chart(
+        document.getElementById('mix-graph'),
+        {
+            type: 'line',
+            data: {
+                labels: JSON.parse(document.getElementById('chart-labels').textContent),
+                datasets: JSON.parse(document.getElementById('chart-datasets').textContent)
+            },
+            options: {
+                animation: { duration: 0 },
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 16,
+                            padding: 16,
+                        }
+                    }
+                }
+            }
+        }
+    );
+</script>

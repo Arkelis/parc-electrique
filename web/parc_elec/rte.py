@@ -24,6 +24,24 @@ def _get_access_token():
     return response["access_token"]
 
 
+def fetch_current_production_mix():
+    logger.debug("Fetching installed data")
+
+    token = _get_access_token()
+    response = requests.get(
+        "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/actual_generations_per_production_type",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    logger.debug(f"Response status: {response.status_code}")
+    if response.status_code != 200:
+        return
+
+    logger.debug("Installed data fetched")
+
+    return response.json()
+
+
 def fetch_current_production():
     logger.debug("Fetching production data")
 
