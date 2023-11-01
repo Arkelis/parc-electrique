@@ -1,6 +1,6 @@
 # Parc électrique français (Géowatt)
 
-![image](https://github.com/Arkelis/parc-electrique/assets/35486980/e094b108-045b-44dd-b734-f7e7513ed1f7)
+![image](./screenshot.png)
 
 Ce dépôt contient le code de Géowatt, une carte interactive permettant de visualiser
 les centales électriques en France ainsi que leur production. Il est structuré en
