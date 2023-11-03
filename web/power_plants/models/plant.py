@@ -46,6 +46,18 @@ POWER_PLANT_FAMILIES = {
     "waste": "fossil"
 }
 
+POWER_PLANT_MIX = {
+    "nuclear": "nuclear",
+    "oil": "fossil",
+    "gas": "fossil",
+    "coal": "fossil",
+    "hydro": "hydro",
+    "tidal": "hydro",
+    "wind": "wind",
+    "solar": "solar",
+    "waste": "fossil"
+}
+
 ENERGY_STYLES = {
     "fossil": {"icon": "fire", "color": "#d11500"},
     "nuclear": {"icon": "atom", "color": "#880dbd"},

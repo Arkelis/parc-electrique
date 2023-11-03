@@ -3,28 +3,32 @@ from datetime import datetime
 from django.contrib.gis.db import models
 from django.db import transaction
 
-from parc_elec import rte
+from parc_elec import odre
 
 ENERGY_LABELS = {
-    "BIOMASS": "biomasse",
-    "FOSSIL_GAS": "gaz",
-    "FOSSIL_HARD_COAL": "charbon",
-    "FOSSIL_OIL": "fioul",
-    "HYDRO_PUMPED_STORAGE": "hydraulique step",
-    "HYDRO_RUN_OF_RIVER_AND_POUNDAGE": "hydraulique fil de l'eau et éclusée",
-    "HYDRO_WATER_RESERVOIR": "hydraulique lacs",
-    "NUCLEAR": "nucléaire",
-    "SOLAR": "solaire",
-    "WASTE": "déchets industriels",
-    "WIND_OFFSHORE": "éolien en mer",
-    "WIND_ONSHORE": "éolien terrestre",
-    "TOTAL": "total",
+    "fioul": "Fioul",
+    "charbon": "Charbon",
+    "gaz": "Gaz",
+    "nucleaire": "Nucléaire",
+    "eolien_terrestre": "Éolien terrestre",
+    "eolien_offshore": "Éolien en mer",
+    "solaire": "Solaire",
+    "hydraulique": "Hydraulique",
+    "pompage": "Pompage",
+    "bioenergies": "Bioénergies",
+    "ech_comm_angleterre": "Échanges le Royaume-Uni",
+    "ech_comm_espagne": "Échanges avec l'Espagne",
+    "ech_comm_italie": "Échanges avec l'Italie",
+    "ech_comm_suisse": "Échanges avec la Suisse",
+    "ech_comm_allemagne_belgique": "Échanges avec l'Allemagne et la Belgique",
 }
 
 
 class PowerMixQuerySet(models.QuerySet):
     def all_types(self):
-        return self.exclude(production_type="TOTAL")
+        qs = self.exclude(production_type__startswith="ech_comm")
+        qs = qs.exclude(production_type='pompage')
+        return qs
 
     def as_chart_payload(self):
         if not self:
@@ -56,7 +60,7 @@ class PowerMix(models.Model):
 
     @property
     def production_type_label(self):
-        return ENERGY_LABELS[self.production_type].capitalize()
+        return ENERGY_LABELS[self.production_type]
 
     @property
     def values_list(self):
@@ -79,22 +83,30 @@ class PowerMixImport:
             PowerMix.objects.bulk_create(PowerMix(**row) for row in self.get_rows())
 
     def get_rows(self):
-        data = self.fetch_data_from_rte()
-        return [
-            self.parse_row(production)
-            for production in data["actual_generations_per_production_type"]
-        ]
+        data = self.fetch_data_from_eco2mix_national()
+        rows = []
+        for label in ENERGY_LABELS:
+            row = {"production_type": label, "values": []}
+            for production in data["results"]:
+                row["values"].append(
+                    {
+                        "date": production["date_heure"],
+                        "value": int(production[label] or 0),
+                    }
+                )
+            rows.append(row)
+        return rows
 
     @staticmethod
-    def fetch_data_from_rte():
-        return rte.fetch_current_production_mix()
+    def fetch_data_from_eco2mix_national():
+        return odre.fetch_eco2mix_national()
 
     @staticmethod
     def parse_row(data):
         return {
             "production_type": data["production_type"],
             "values": [
-                {"date": row["end_date"], "value": row["value"]}
+                {"date": row["start_date"], "value": row["value"]}
                 for row in data["values"]
             ],
         }

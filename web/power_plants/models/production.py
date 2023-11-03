@@ -74,7 +74,7 @@ class PowerProductionImport:
             "eic": data["unit"]["eic_code"],
             "name": data["unit"]["name"],
             "values": [
-                {"date": row["end_date"], "value": row["value"]}
+                {"date": row["start_date"], "value": row["value"]}
                 for row in data["values"]
             ],
         }

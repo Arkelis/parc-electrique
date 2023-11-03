@@ -7,6 +7,7 @@
 <div class="h-[500px] py-4">
     <canvas id="mix-graph"></canvas>
 </div>
+<p>Plus de détails sur <a class="underline" href="https://www.rte-france.com/eco2mix" target="_blank">éCO<sub>2</sub>mix</a></p>
 <script>
     Chart.defaults.font.family = '"Source Sans 3"'
     new Chart(
@@ -27,7 +28,7 @@
                 scales: {
                     y: {
                         stacked: true,
-                        beginAtZero: true,
+                        //beginAtZero: false,
                     }
                 },
                 plugins: {
