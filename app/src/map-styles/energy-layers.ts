@@ -59,7 +59,7 @@ export const energyLayers = () => {
       type: "circle",
       filter: [
         "all",
-        ["<", ["zoom"], 9],
+        ["<", ["zoom"], 10],
         ["<=", ["get", "output"], 1000000000],
       ],
       paint: {
@@ -75,8 +75,10 @@ export const energyLayers = () => {
       type: "symbol",
       filter: [
         "any",
-        [">=", ["zoom"], 9],
         [">=", ["get", "output"], 1000000000],
+        ["all", [">=", ["zoom"], 7], [">=", ["get", "output"], 100000000]],
+        ["all", [">=", ["zoom"], 9], [">=", ["get", "output"], 10000000]],
+        [">=", ["zoom"], 10],
       ],
       layout: {
         "icon-allow-overlap": true,
@@ -93,7 +95,9 @@ export const energyLayers = () => {
       filter: [
         "any",
         [">=", ["get", "output"], 1000000000],
-        [">=", ["zoom"], 9],
+        ["all", [">=", ["zoom"], 7], [">=", ["get", "output"], 100000000]],
+        ["all", [">=", ["zoom"], 9], [">=", ["get", "output"], 10000000]],
+        [">=", ["zoom"], 10],
       ],
       layout: {
         "symbol-placement": "point",
