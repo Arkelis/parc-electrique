@@ -1,0 +1,69 @@
+tables:
+  regions:
+    type: relation
+    relation_types: [boundary]
+    mapping:
+      boundary: [administrative]
+    filters:
+      require:
+        admin_level: ['4']
+    columns:
+    - {name: osm_id, type: id}
+    - {key: name, name: name, type: string}
+    - {key: admin_level, name: admin_level, type: string}
+  region_members:
+    type: relation_member
+    relation_types: [boundary]
+    mapping:
+      boundary: [administrative]
+    filters:
+      require:
+        admin_level: ['4']
+    columns:
+    - {name: osm_id, type: id}
+    - {key: name, name: name, type: string}
+    - {name: geometry, type: geometry}
+    - {key: member_id, name: member_id, type: member_id}
+    - {key: member_role, name: member_role, type: member_role}
+    - {key: admin_level, name: admin_level, type: string}
+  power_plants:
+    type: polygon
+    mapping:
+      power: [plant]
+    columns:
+    - {name: osm_id, type: id}
+    - {name: geometry, type: geometry}
+    - {key: 'plant:output:electricity', name: output, type: string}
+    - {key: 'plant:source', name: source, type: string}
+    - {key: name, name: name, type: string}
+    - {key: short_name, name: short_name, type: string}
+    - {key: wikipedia, name: wikipedia, type: string}
+    - {key: wikidata, name: wikidata, type: string}
+    - {key: operator, name: operator, type: string}
+    - {key: 'operator:wikidata', name: operator_wikidata, type: string}
+    - {key: 'operator:wikipedia', name: operator_wikipedia, type: string}
+  power_plants_relations:
+    type: relation
+    relation_types: [site]
+    mapping:
+      power: [plant]
+    columns:
+    - {name: osm_id, type: id}
+    - {key: 'plant:output:electricity', name: output, type: string}
+    - {key: 'plant:source', name: source, type: string}
+    - {key: name, name: name, type: string}
+    - {key: short_name, name: short_name, type: string}
+    - {key: wikipedia, name: wikipedia, type: string}
+    - {key: wikidata, name: wikidata, type: string}
+    - {key: operator, name: operator, type: string}
+    - {key: 'operator:wikidata', name: operator_wikidata, type: string}
+    - {key: 'operator:wikipedia', name: operator_wikipedia, type: string}
+  power_plants_relation_members:
+    type: polygon
+    mapping:
+      power: [plant]
+    columns:
+    - {name: osm_id, type: id}
+    - {name: geometry, type: geometry}
+    - {key: member_id, name: member_id, type: member_id}
+    - {key: member_role, name: member_role, type: member_role}

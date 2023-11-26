@@ -1,16 +1,20 @@
 <p class="font-sans text-sm mb-2">
     <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
+    {% if plant.region %} / <a class="hover:underline cursor-pointer"  hx-get="/{{ plant.region.gid }}">{{ plant.region.nom }}</a>{% endif %}
     / <span class="capitalize">{{ plant.production_mode }}</span>
 </p>
 
 <div class="flex gap-2 items-center mb-4">
     <img class="w-12 h-12" src="http://localhost:5173/sprite/{{ plant.icon }}.png">
-    <h2 class="text-lg font-bold uppercase">{{ plant.name }}</h2>
+    <h1 class="text-lg font-bold uppercase">{{ plant.name }}</h2>
 </div>
 
-<h3 class="font-bold text-l mt-4">Informations générales</h3>
+<h2 class="font-bold text-l mt-4">Informations générales</h2>
 <p>Mode de production : {{ plant.production_mode }}</p>
 <p>Puissance installée : {{ plant.output }}</p>
+{% if plant.operator %}
+<p>Opérateur : {{ plant.operator }}</p>
+{% endif %}
 
 <p><a href="{{ plant.openstreetmap_url }}" target="_blank" class="underline">Voir sur OpenStreetMap</a></p>
 
@@ -23,14 +27,14 @@
 {% endif %}
 
 {% if plant.eic_list %}
-<h3 class="font-bold text-l mt-4">Tranches</h3>
+<h2 class="font-bold text-l mt-4">Tranches</h2>
 <ul>
     {% for capacity in capacities %}
     <li>{{ capacity.name }} - {{ capacity.output }} MW</li>
     {% endfor %}
 </ul>
 
-<h3 class="font-bold text-l mt-4">Production</h3>
+<h2 class="font-bold text-l mt-4">Production</h2>
 <p>Puissance délivrée en MW par tranche lors des huit dernières heures</p>
 {{ production.labels | json_script:"chart-labels" }}
 {{ production.datasets | json_script:"chart-datasets" }}
@@ -73,4 +77,10 @@
         }
     );
 </script>
+{% endif %}
+
+{% if plant.region %}
+<p>Région : {{ plant.region.nom }}</p>
+{% else %}
+<p>Pas de région</p>
 {% endif %}

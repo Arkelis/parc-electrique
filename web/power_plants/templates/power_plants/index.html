@@ -1,13 +1,20 @@
 {{ mix.labels | json_script:"chart-labels" }}
 {{ mix.datasets | json_script:"chart-datasets" }}
 
-<h1 class="text-3xl font-light">Géowatt</h1>
+<h1 class="text-3xl font-light mb-3">Géowatt</h1>
+<p>Bienvenue sur la carte de France de production d'électricité. Cliquez sur une centrale sur la carte
+    pour obtenir ces caractéristiques.</p>
+<a hx-get="{% url 'about' %}" href="{% url 'about' %}" hx-target='#panel' class="underline">À propos du site</a>
+
 <h3 class="font-bold text-l mt-4">Mix énergétique français</h3>
 <p>Puissance délivrée en MW par type de production lors des huit dernières heures</p>
 <div class="h-[500px] py-4">
     <canvas id="mix-graph"></canvas>
 </div>
-<p>Plus de détails sur <a class="underline" href="https://www.rte-france.com/eco2mix" target="_blank">éCO<sub>2</sub>mix</a></p>
+<p>
+    Ces données sont founris par RTE, le réseau de transport d'électricité.
+    Plus de détails sur l'application <a class="underline" href="https://www.rte-france.com/eco2mix"
+        target="_blank">éCO<sub>2</sub>mix</a>.</p>
 <script>
     Chart.defaults.font.family = '"Source Sans 3"'
     new Chart(

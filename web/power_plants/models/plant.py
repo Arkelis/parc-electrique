@@ -2,6 +2,7 @@ from django.contrib.gis.db import models
 from django.db.models.expressions import RawSQL
 
 from parc_elec.wikidata import fetch_eic_identifiers
+from power_plants.models.region import Region
 
 
 class PowerPlantManager(models.Manager):
@@ -24,6 +25,7 @@ POWER_PLANT_SOURCES = {
     "biofuel": "bio-carburant",
     "diesel": "diesel",
     "biomass": "biomasse",
+    "biogas": "biogaz",
     "geothermal": "géothermique",
     "wind": "éolien",
     "solar": "solaire",
@@ -47,15 +49,31 @@ POWER_PLANT_FAMILIES = {
 }
 
 POWER_PLANT_MIX = {
-    "nuclear": "nuclear",
-    "oil": "fossil",
-    "gas": "fossil",
-    "coal": "fossil",
-    "hydro": "hydro",
+    "nuclear": "NUCLEAR",
+    "oil": "FOSSIL_OIL",
+    "gas": "FOSSIL_GAS",
+    "coal": "FOSSIL_HARD_COAL",
+    "hydro": ["HYDRO_PUMPED_STORAGE", "HYDRO_RUN_OF_RIVER_AND_POUNDAGE", "HYDRO_WATER_RESERVOIR"],
     "tidal": "hydro",
     "wind": "wind",
     "solar": "solar",
     "waste": "fossil"
+}
+
+ENERGY_LABELS = {
+    "BIOMASS": "biomasse",
+    "FOSSIL_GAS": "gaz",
+    "FOSSIL_HARD_COAL": "charbon",
+    "FOSSIL_OIL": "fioul",
+    "HYDRO_PUMPED_STORAGE": "hydraulique step",
+    "HYDRO_RUN_OF_RIVER_AND_POUNDAGE": "hydraulique fil de l'eau et éclusée",
+    "HYDRO_WATER_RESERVOIR": "hydraulique lacs",
+    "NUCLEAR": "nucléaire",
+    "SOLAR": "solaire",
+    "WASTE": "déchets industriels",
+    "WIND_OFFSHORE": "éolien en mer",
+    "WIND_ONSHORE": "éolien terrestre",
+    "TOTAL": "total",
 }
 
 ENERGY_STYLES = {
@@ -82,7 +100,8 @@ class PowerPlant(models.Model):
     operator = models.CharField(blank=True, null=True)
     operator_wikidata = models.CharField(blank=True, null=True)
     operator_wikipedia = models.CharField(blank=True, null=True)
-    geometry = models.MultiPolygonField(blank=True, null=True)
+    geometry = models.MultiPolygonField(blank=True, null=True, srid=3857)
+    region = models.ForeignKey(to='Region', on_delete=models.DO_NOTHING, db_column='region_gid', null=True)
 
     objects = PowerPlantManager()
 
@@ -90,6 +109,7 @@ class PowerPlant(models.Model):
         managed = False
         db_table = "osm_power_plants"
         unique_together = (("osm_id", "id"),)
+        verbose_name = 'centrale'
 
     def __str__(self):
         return self.name or self.short_name or f"Centrale #{self.osm_id}"
@@ -125,5 +145,15 @@ class PowerPlant(models.Model):
 
     @property
     def production_mode(self):
-        display_sources = (POWER_PLANT_SOURCES[s] for s in self._sources_as_list())
+        display_sources = (POWER_PLANT_SOURCES.get(s, s) for s in self._sources_as_list())
         return ", ".join(display_sources)
+    
+    @classmethod
+    def assign_regions(cls):
+        for power_plant in cls.objects.all():
+            if power_plant.region:
+                next
+
+            print('assigning', power_plant.name)
+            power_plant.region = Region.objects.filter(geom__intersects=power_plant.geometry).first()
+            power_plant.save()

@@ -38,6 +38,7 @@ def fetch_eic_identifiers(q: str):
 
     wikidata_payload = _get_results_from_wikidata(query.format(q=q))
     identifiers = [binding['code_d_identification_énergie']['value']
-                   for binding in wikidata_payload['results']['bindings']]
+                   for binding in wikidata_payload['results']['bindings']
+                   if binding]
     cache.set(cache_key, identifiers, 3600 * 24)
     return identifiers
