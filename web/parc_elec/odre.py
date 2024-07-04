@@ -6,7 +6,7 @@ import requests
 API_KEY = os.getenv("PARC_ELEC_FR_ODRE_API_KEY")
 
 def fetch_eco2mix_national():
-    logger.debug("Fetching installed data")
+    logger.debug("Fetching eco2mix national")
 
     response = requests.get(
         f"https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-national-tr/records?{_query()}",
@@ -17,13 +17,13 @@ def fetch_eco2mix_national():
     if response.status_code != 200:
         return
 
-    logger.debug("Installed data fetched")
+    logger.debug("eco2mix national fetched")
 
     return response.json()
 
 
 def fetch_eco2mix_regional():
-    logger.debug("Fetching installed data")
+    logger.debug("Fetching eco2mix regional")
 
     response = requests.get(
         f"https://odre.opendatasoft.com/api/explore/v2.1/catalog/datasets/eco2mix-regional-tr/records?{_query()}",
@@ -34,7 +34,7 @@ def fetch_eco2mix_regional():
     if response.status_code != 200:
         return
 
-    logger.debug("Installed data fetched")
+    logger.debug("eco2mix regional fetched")
 
     return response.json()
 

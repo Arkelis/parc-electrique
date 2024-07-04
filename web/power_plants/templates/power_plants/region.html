@@ -1,0 +1,55 @@
+{{ mix.labels | json_script:"chart-labels" }}
+{{ mix.datasets | json_script:"chart-datasets" }}
+
+<p class="font-sans text-sm mb-2">
+    <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
+    / <span>{{ region.nom }}</span>
+</p>
+
+<h1 class="text-lg font-bold uppercase">{{ region.nom }}</h2>
+
+<h2 class="font-bold text-l mt-4">Mix électrique régional</h3>
+<p>Puissance délivrée en MW par type de production lors des huit dernières heures dans la région {{ region.nom }}</p>
+<div class="h-[500px] py-4">
+    <canvas id="mix-graph"></canvas>
+</div>
+<p>
+    Ces données sont founris par RTE, le réseau de transport d'électricité.
+    Plus de détails sur l'application <a class="underline" href="https://www.rte-france.com/eco2mix"
+        target="_blank">éCO<sub>2</sub>mix</a>.</p>
+<script>
+    Chart.defaults.font.family = '"Source Sans 3"'
+    new Chart(
+        document.getElementById('mix-graph'),
+        {
+            type: 'line',
+            data: {
+                labels: JSON.parse(document.getElementById('chart-labels').textContent),
+                datasets: JSON.parse(document.getElementById('chart-datasets').textContent)
+            },
+            options: {
+                animation: { duration: 0 },
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                scales: {
+                    y: {
+                        stacked: true,
+                        //beginAtZero: false,
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 16,
+                            padding: 16,
+                        }
+                    }
+                }
+            }
+        }
+    );
+</script>

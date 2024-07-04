@@ -1,0 +1,14 @@
+{
+  "src/map.css": {
+    "file": "assets/map-65208569.css",
+    "src": "src/map.css"
+  },
+  "src/map.ts": {
+    "css": [
+      "assets/map-65208569.css"
+    ],
+    "file": "assets/map.ts-63eba53d.js",
+    "isEntry": true,
+    "src": "src/map.ts"
+  }
+}

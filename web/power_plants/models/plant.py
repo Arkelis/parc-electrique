@@ -125,10 +125,11 @@ class PowerPlant(models.Model):
         return self.source.split(";")
 
     @property
-    def icon(self):
+    def icon_path(self):
         main_source = self._sources_as_list()[0]
         energy_family = POWER_PLANT_FAMILIES.get(main_source, "electricity")
-        return ENERGY_STYLES[energy_family]["icon"]
+        icon_name = ENERGY_STYLES[energy_family]["icon"]
+        return f"sprite/{icon_name}.png"
 
     @property
     def openstreetmap_url(self):

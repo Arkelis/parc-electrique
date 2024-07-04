@@ -1,15 +1,17 @@
+{% load static %}
+{% load django_vite %}
+
 <!doctype html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Géowatt - Parc français de production d'électricité</title>
   {{ families | json_script:"energy-families" }}
   {{ styles | json_script:"energy-styles" }}
-  <script type="module" src="http://localhost:5173/@vite/client"></script>
-  <script type="module" src="http://localhost:5173/src/map.ts"></script>
+  {% vite_hmr_client %}
+  {% vite_asset 'src/map.ts' %}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"
     integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>

@@ -10,4 +10,6 @@ function launch_django {
     cd web && poetry run python manage.py runserver
 }
 
+
+
 (trap 'kill 0' SIGINT; launch_map & launch_node & launch_django)

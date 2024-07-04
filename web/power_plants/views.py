@@ -8,10 +8,13 @@ from power_plants.models import PowerPlant
 from power_plants.models import PowerCapacity
 from power_plants.models import PowerProduction
 from power_plants.models import PowerMix
+from power_plants.models import Region
 from power_plants.models.plant import ENERGY_STYLES, POWER_PLANT_FAMILIES
 
 
-def _render_htmx(request: HttpRequest, template_name: str, context: Optional[dict] = None):
+def _render_htmx(
+    request: HttpRequest, template_name: str, context: Optional[dict] = None
+):
     return render(
         request,
         template_name if request.htmx else template_name.replace("html", "page.html"),
@@ -20,7 +23,7 @@ def _render_htmx(request: HttpRequest, template_name: str, context: Optional[dic
 
 
 def index(request: HttpRequest):
-    mix = PowerMix.objects.all_types().as_chart_payload()
+    mix = PowerMix.objects.national().all_types().as_chart_payload()
     return _render_htmx(
         request,
         "power_plants/index.html",
@@ -33,24 +36,37 @@ def about(request: HttpRequest):
 
 
 def plant(request: HttpRequest, osm_id: int):
-    try:
-        plant = get_object_or_404(PowerPlant, osm_id=osm_id)
-    except ValueError:
-        return HttpResponse(
-            f"Plant identifier is expected to be an integer. Given: {osm_id}",
-            status=400,
-        )
-    capacities = PowerCapacity.objects.eic(plant.eic_list())
-    production = PowerProduction.objects.eic(plant.eic_list()).as_chart_payload()
+    plant_object = get_object_or_404(PowerPlant, osm_id=osm_id)
+    capacities = PowerCapacity.objects.eic(plant_object.eic_list())
+    production = PowerProduction.objects.eic(plant_object.eic_list()).as_chart_payload()
     response = _render_htmx(
         request,
         "power_plants/plant.html",
         context={
             "families": POWER_PLANT_FAMILIES,
             "styles": ENERGY_STYLES,
-            "plant": plant,
+            "plant": plant_object,
             "capacities": capacities,
             "production": production,
         },
     )
     return response
+
+
+def region(request: HttpRequest, region_slug: str):
+    try:
+        region_object = Region.objects.get_slug(region_slug)
+    except Region.DoesNotExist:
+        return HttpResponse(status=404)
+
+    mix = PowerMix.objects.all_types().region(region_object.code_insee).as_chart_payload()
+    return _render_htmx(
+        request,
+        "power_plants/region.html",
+        context={
+            "families": POWER_PLANT_FAMILIES,
+            "styles": ENERGY_STYLES,
+            "region": region_object,
+            "mix": mix,
+        },
+    )

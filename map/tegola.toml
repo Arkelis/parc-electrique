@@ -1,7 +1,7 @@
 [[providers]]
 name = "postgis"
 type = "mvt_postgis"
-uri = "postgresql://postgres@localhost:5432/osm"
+uri = "postgresql://${PARC_ELEC_FR_DB_USER}:${PARC_ELEC_FR_DB_PASSWORD}@${PARC_ELEC_FR_DB_HOST}:${PARC_ELEC_FR_DB_PORT}/${PARC_ELEC_FR_DB_NAME}"
 srid = 3857
 
 [[providers.layers]]

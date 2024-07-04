@@ -1,5 +1,6 @@
+import 'vite/modulepreload-polyfill';
 import { Map } from "maplibre-gl";
-import style from "./map-styles/style.json";
+import { style } from "./map-styles/style"
 import ignLayers from "./map-styles/layer-ign.json";
 import { energyLayers } from "./map-styles/energy-layers";
 import * as htmx from "htmx.org";
@@ -15,14 +16,14 @@ const map = new Map({
   // style: "https://demotiles.maplibre.org/style.json",
   style,
   center: [5, 47.2],
-  zoom: 5, // starting zoom
+  zoom: 5.5, // starting zoom
   antialias: true,
 });
 
 map.on("load", () => {
   icons.forEach((iconName) =>
     map.loadImage(
-      `http://localhost:5173/sprite/${iconName}.png`,
+      `${import.meta.env.VITE_SPRITE_URL}/${iconName}.png`,
       (_, image) => {
         if (!image) return;
         map.addImage(iconName, image);
@@ -36,7 +37,7 @@ map.on("load", () => {
     if (element.features === undefined) return;
     const properties = element.features[0].properties;
     console.log(properties);
-    const plantUrl = `/plant/${properties.gid}`
+    const plantUrl = `/centrale/${properties.gid}`
     htmx.ajax("get", plantUrl, "#panel");
     history.pushState(null, '', plantUrl)
   });

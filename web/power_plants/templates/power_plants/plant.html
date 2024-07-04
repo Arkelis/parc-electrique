@@ -1,11 +1,13 @@
+{% load static %}
+
 <p class="font-sans text-sm mb-2">
     <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
-    {% if plant.region %} / <a class="hover:underline cursor-pointer"  hx-get="/{{ plant.region.gid }}">{{ plant.region.nom }}</a>{% endif %}
+    {% if plant.region %} / <a class="hover:underline cursor-pointer"  hx-get="/{{ plant.region.slug }}" href="{{ plant.region.slug }}" hx-target="#panel">{{ plant.region.nom }}</a>{% endif %}
     / <span class="capitalize">{{ plant.production_mode }}</span>
 </p>
 
 <div class="flex gap-2 items-center mb-4">
-    <img class="w-12 h-12" src="http://localhost:5173/sprite/{{ plant.icon }}.png">
+    <img class="w-12 h-12" src="{% static plant.icon_path %}">
     <h1 class="text-lg font-bold uppercase">{{ plant.name }}</h2>
 </div>
 
@@ -77,10 +79,4 @@
         }
     );
 </script>
-{% endif %}
-
-{% if plant.region %}
-<p>Région : {{ plant.region.nom }}</p>
-{% else %}
-<p>Pas de région</p>
 {% endif %}
