@@ -9,9 +9,12 @@ SECRET_KEY = (
     or "django-insecure-&9icj#&rur*)5yel^w3w3wt37-@a$-oj8ub4)_t31o=#!0qb+_"
 )
 
-DEBUG = True or not os.getenv("PARC_ELEC_FR_ENV_PRODUCTION")
+DEBUG = not os.getenv("PARC_ELEC_FR_ENV_PRODUCTION")
 
 ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]"]
+
+if production_host := os.getenv("PARC_ELEC_FR_HOST"):
+    ALLOWED_HOSTS.append(production_host)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
