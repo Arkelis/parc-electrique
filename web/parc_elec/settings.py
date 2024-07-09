@@ -25,30 +25,38 @@ if production_host := os.getenv("PARC_ELEC_FR_HOST"):
     ALLOWED_HOSTS.append(production_host)
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "whitenoise.runserver_nostatic",
-    "django.contrib.staticfiles",
-    "django.contrib.gis",
-    "django_vite",
-    "power_plants",
-    "debug_toolbar",
+    app
+    for app in [
+        "django.contrib.admin",
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.messages",
+        "whitenoise.runserver_nostatic",
+        "django.contrib.staticfiles",
+        "django.contrib.gis",
+        "django_vite",
+        "power_plants",
+        "debug_toolbar" if DEBUG else None,
+    ]
+    if app is not None
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "parc_elec.middlewares.HTMXMiddleware",
+    middleware
+    for middleware in [
+        "django.middleware.security.SecurityMiddleware",
+        "whitenoise.middleware.WhiteNoiseMiddleware",
+        "debug_toolbar.middleware.DebugToolbarMiddleware" if DEBUG else None,
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "django.middleware.common.CommonMiddleware",
+        "django.middleware.csrf.CsrfViewMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "django.contrib.messages.middleware.MessageMiddleware",
+        "django.middleware.clickjacking.XFrameOptionsMiddleware",
+        "parc_elec.middlewares.HTMXMiddleware",
+    ]
+    if middleware is not None
 ]
 
 ROOT_URLCONF = "parc_elec.urls"
