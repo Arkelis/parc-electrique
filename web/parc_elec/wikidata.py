@@ -1,10 +1,8 @@
-import sys
-
 from django.core.cache import cache
-from SPARQLWrapper import SPARQLWrapper, JSON
+import requests
 
 
-WIKIDATA_SPARQL_ENDPOINT = "https://query.wikidata.org/sparql"
+WIKIDATA_API_ENDPOINT = "https://www.wikidata.org/w/rest.php/wikibase/v0/entities/items/{}/statements?property=P8645"
 USER_AGENT = (
     "parc-elec/0.0 "
     "(https://pycolore.fr; guillaume.fayard@pycolore.fr) "
@@ -12,33 +10,36 @@ USER_AGENT = (
 )
 
 
-def _get_results_from_wikidata(query: str):
-    user_agent = USER_AGENT.format(sys.version_info[0], sys.version_info[1])
-    sparql = SPARQLWrapper(WIKIDATA_SPARQL_ENDPOINT, agent=user_agent)
-    sparql.setQuery(query)
-    sparql.setReturnFormat(JSON)
-    return sparql.query().convert()
+def _get_eic_from_payload(payload: dict):
+    return payload.get("value", {}).get("content")
 
 
-def fetch_eic_identifiers(q: str):
+def _get_results_from_wikidata(entity_id: str):
+    wikidata_response = requests.get(
+        url=WIKIDATA_API_ENDPOINT.format(entity_id), headers={"User-Agent": USER_AGENT}
+    )
+    json_response = wikidata_response.json()
+
+    if not (code_payload_list := json_response.get("P8645")):
+        return []
+
+    return [
+        code
+        for payload in code_payload_list
+        if (code := payload.get("value", {}).get("content")) is not None
+    ]
+
+
+def fetch_eic_identifiers(entity_id: str):
     """Retrieve from Wikidata eic identifiers of the given element.
 
-    q is the Wikidata id of the element.
+    entity_id is the Wikidata id of the element.
     Return a list of str.
     """
-    query = """
-        SELECT ?code_d_identification_énergie WHERE {{
-        VALUES ?item {{ wd:{q} }}
-        OPTIONAL {{ ?item wdt:P8645 ?code_d_identification_énergie. }}
-        }}
-    """
-    cache_key = f'wd:{q}:eic'
+    cache_key = f"wd:{entity_id}:eic"
     if cached_value := cache.get(cache_key):
         return cached_value
 
-    wikidata_payload = _get_results_from_wikidata(query.format(q=q))
-    identifiers = [binding['code_d_identification_énergie']['value']
-                   for binding in wikidata_payload['results']['bindings']
-                   if binding]
-    cache.set(cache_key, identifiers, 3600 * 24)
-    return identifiers
+    eic_identifiers = _get_results_from_wikidata(entity_id)
+    cache.set(cache_key, eic_identifiers, 3600 * 24)
+    return eic_identifiers

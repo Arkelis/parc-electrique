@@ -6,6 +6,9 @@ from django.utils.text import slugify
 
 
 class RegionQuerySet(models.QuerySet):
+    def defer_geometry(self):
+        return self.defer('geom')
+
     def get_slug(self, slug):
         return self.annotate(slug=Lower(Replace("nom", Value(" "), Value("-")))).get(slug=slug)
 

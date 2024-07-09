@@ -11,15 +11,15 @@ class PowerProductionQuerySet(models.QuerySet):
         return self.filter(eic__in=eic_list)
 
     def as_chart_payload(self):
-        if not self:
+        if not (objects := list(self)):
             return {"datasets": [], "labels": []}
-
+        
         return {
             "datasets": [
                 {"label": i.name, "data": i.values_list, "fill": "stack"}
-                for i in self.iterator()
+                for i in objects
             ],
-            "labels": self.first().labels_list,
+            "labels": objects[0].labels_list,
         }
 
 

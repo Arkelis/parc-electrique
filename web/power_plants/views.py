@@ -37,8 +37,10 @@ def about(request: HttpRequest):
 
 def plant(request: HttpRequest, osm_id: int):
     plant_object = get_object_or_404(PowerPlant, osm_id=osm_id)
-    capacities = PowerCapacity.objects.eic(plant_object.eic_list())
-    production = PowerProduction.objects.eic(plant_object.eic_list()).as_chart_payload()
+    eic_identifiers = plant_object.eic_list()
+    capacities = PowerCapacity.objects.eic(eic_identifiers)
+    production = PowerProduction.objects.eic(eic_identifiers).as_chart_payload()
+    region = Region.objects.defer_geometry().get(gid=plant_object.region_id)
     response = _render_htmx(
         request,
         "power_plants/plant.html",
@@ -48,6 +50,7 @@ def plant(request: HttpRequest, osm_id: int):
             "plant": plant_object,
             "capacities": capacities,
             "production": production,
+            "region": region,
         },
     )
     return response
@@ -55,7 +58,7 @@ def plant(request: HttpRequest, osm_id: int):
 
 def region(request: HttpRequest, region_slug: str):
     try:
-        region_object = Region.objects.get_slug(region_slug)
+        region_object = Region.objects.defer_geometry().get_slug(region_slug)
     except Region.DoesNotExist:
         return HttpResponse(status=404)
 

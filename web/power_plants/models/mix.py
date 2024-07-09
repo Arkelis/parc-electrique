@@ -51,7 +51,7 @@ class PowerMixQuerySet(models.QuerySet):
         return qs
 
     def as_chart_payload(self):
-        if not self:
+        if not (objects := list(self)):
             return {"datasets": [], "labels": []}
 
         return {
@@ -61,9 +61,9 @@ class PowerMixQuerySet(models.QuerySet):
                     "data": i.values_list[-8:],
                     "fill": "stack",
                 }
-                for i in self.iterator()
+                for i in objects
             ],
-            "labels": self.first().labels_list[-8:],
+            "labels": objects[0].labels_list[-8:],
         }
 
 

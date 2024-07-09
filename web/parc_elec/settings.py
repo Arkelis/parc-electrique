@@ -1,6 +1,13 @@
 import os
 from pathlib import Path
+import sentry_sdk
 
+if sentry_dsn := os.getenv("PARC_ELEC_FR_SENTRY_DSN"):
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -9,7 +16,8 @@ SECRET_KEY = (
     or "django-insecure-&9icj#&rur*)5yel^w3w3wt37-@a$-oj8ub4)_t31o=#!0qb+_"
 )
 
-DEBUG = not os.getenv("PARC_ELEC_FR_ENV_PRODUCTION")
+DEBUG = str(os.getenv("PARC_ELEC_FR_ENV_PRODUCTION")) != "1"
+
 
 ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]"]
 
@@ -27,11 +35,13 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "django_vite",
     "power_plants",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -140,3 +150,7 @@ LOGGING = {
         },
     },
 }
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

@@ -19,10 +19,12 @@ sparqlwrapper = "^2.0.0"
 whitenoise = "^6.6.0"
 django-vite = "^3.0.3"
 gunicorn="*"
+sentry-sdk = {extras = ["django"], version = "^2.7.1"}
 
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
+django-debug-toolbar = "^4.4.5"
 
 [build-system]
 requires = ["poetry-core"]

@@ -2,7 +2,7 @@
 
 <p class="font-sans text-sm mb-2">
     <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
-    {% if plant.region %} / <a class="hover:underline cursor-pointer"  hx-get="/{{ plant.region.slug }}" href="{{ plant.region.slug }}" hx-target="#panel">{{ plant.region.nom }}</a>{% endif %}
+    {% if region %} / <a class="hover:underline cursor-pointer"  hx-get="/{{ region.slug }}" href="/{{ region.slug }}" hx-target="#panel">{{ region.nom }}</a>{% endif %}
     / <span class="capitalize">{{ plant.production_mode }}</span>
 </p>
 
