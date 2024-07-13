@@ -32,7 +32,9 @@ def index(request: HttpRequest):
 
 
 def about(request: HttpRequest):
-    return _render_htmx(request, "power_plants/about.html")
+    return _render_htmx(
+        request, "power_plants/about.html", context={"show_panel": True}
+    )
 
 
 def plant(request: HttpRequest, osm_id: int):
@@ -51,6 +53,7 @@ def plant(request: HttpRequest, osm_id: int):
             "capacities": capacities,
             "production": production,
             "region": region,
+            "show_panel": True,
         },
     )
     return response
@@ -62,7 +65,9 @@ def region(request: HttpRequest, region_slug: str):
     except Region.DoesNotExist:
         return HttpResponse(status=404)
 
-    mix = PowerMix.objects.all_types().region(region_object.code_insee).as_chart_payload()
+    mix = (
+        PowerMix.objects.all_types().region(region_object.code_insee).as_chart_payload()
+    )
     return _render_htmx(
         request,
         "power_plants/region.html",
@@ -71,5 +76,6 @@ def region(request: HttpRequest, region_slug: str):
             "styles": ENERGY_STYLES,
             "region": region_object,
             "mix": mix,
+            "show_panel": True,
         },
     )

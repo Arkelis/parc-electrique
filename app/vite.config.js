@@ -8,6 +8,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         "map.ts": "./src/map.ts",
+        "elements.ts": "./src/elements.ts",
       },
     },
   },

@@ -1,6 +1,7 @@
-import 'vite/modulepreload-polyfill';
+import "vite/modulepreload-polyfill";
 import { Map } from "maplibre-gl";
-import { style } from "./map-styles/style"
+import "maplibre-gl/dist/maplibre-gl.css";
+import { style } from "./map-styles/style";
 import ignLayers from "./map-styles/layer-ign.json";
 import { energyLayers } from "./map-styles/energy-layers";
 import * as htmx from "htmx.org";
@@ -15,7 +16,7 @@ const map = new Map({
   container: "map", // container id
   // style: "https://demotiles.maplibre.org/style.json",
   style,
-  center: [5, 47.2],
+  center: [3, 47.2],
   zoom: 5.5, // starting zoom
   antialias: true,
 });
@@ -36,10 +37,11 @@ map.on("load", () => {
   map.on("click", "power_plants_icon", (element) => {
     if (element.features === undefined) return;
     const properties = element.features[0].properties;
-    console.log(properties);
-    const plantUrl = `/centrale/${properties.gid}`
-    htmx.ajax("get", plantUrl, "#panel");
-    history.pushState(null, '', plantUrl)
+    const plantUrl = `/centrale/${properties.gid}`;
+    htmx.ajax("get", plantUrl, "#panel").then(() => {
+      history.pushState(null, "", plantUrl);
+      window.dispatchEvent(new Event("togglepanel"));
+    });
   });
 
   map.on("mouseenter", "power_plants_icon", () => {
@@ -51,7 +53,10 @@ map.on("load", () => {
   });
 });
 
-window.addEventListener('popstate', function (ev) {
+window.addEventListener("popstate", () => {
   htmx.ajax("get", document.location.href, "#panel");
 });
 
+window.addEventListener("togglepanel", () => {
+  document.querySelector("#panel")?.classList.toggle("hidden");
+});
