@@ -1,53 +1,44 @@
-{% load static %} {% load django_vite %}
-
+{% load static %}
+{% load django_vite %}
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Géowatt - Parc français de production d'électricité</title>
-    {{ families | json_script:"energy-families" }}
-    {{ styles | json_script:"energy-styles" }}
-    {% vite_hmr_client %}
-    {% vite_asset 'src/map.ts' %}
-    {% vite_asset 'src/elements.ts' %}
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"
-      integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-  </head>
-
-  <body class="font-sans">
-    <div class="md:grid md:grid-cols-[25rem,_1fr] md:grid-rows-1 h-screen">
-      <parc-elec-panel-trigger class="md:hidden absolute offset-0 m-4 z-10">
-        <button type="button" class="text-gray-700 bg-white p-1 rounded shadow">
-          <span class="sr-only">Ouvrir le menu</span
-          ><svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            aria-hidden="true"
-            class="h-6 w-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-            ></path>
-          </svg></button
-      ></parc-elec-panel-trigger>
-      <section
-        id="panel"
-        class="min-h-screen w-full absolute bg-white offset-0 md:relative z-20 shadow-xl p-4 {% if not show_panel %}hidden{% endif %} md:block"
-        hx-push-url="true"
-      >
-        {% block panel %}{% endblock %}
-      </section>
-      <section id="map" class="cursor-grabbing h-screen"></section>
-    </div>
-  </body>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Géowatt - Parc français de production d'électricité</title>
+        {{ families | json_script:"energy-families" }}
+        {{ styles | json_script:"energy-styles" }}
+        {% vite_hmr_client %}
+        {% vite_asset 'src/map.ts' %}
+        {% vite_asset 'src/elements.ts' %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"
+                integrity="sha512-6HrPqAvK+lZElIZ4mZ64fyxIBTsaX5zAFZg2V/2WT+iKPrFzTzvx6QAsLW2OaLwobhMYBog/+bvmIEEGXi0p1w=="
+                crossorigin="anonymous"
+                referrerpolicy="no-referrer"></script>
+    </head>
+    <body class="font-sans">
+        <div class="md:grid md:grid-cols-[25rem,_1fr] md:grid-rows-1 h-screen">
+            <parc-elec-panel-trigger class="md:hidden absolute offset-0 m-4 z-10">
+            <button type="button" class="text-gray-700 bg-white p-1 rounded shadow">
+                <span class="sr-only">Ouvrir le menu</span>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.5"
+                     stroke="currentColor"
+                     aria-hidden="true"
+                     class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
+                </svg>
+            </button>
+            </parc-elec-panel-trigger>
+            <section id="panel"
+                     class="min-h-screen w-full absolute bg-white offset-0 md:relative z-20 shadow-xl p-4 {% if not show_panel %}hidden{% endif %} md:block"
+                     hx-push-url="true">
+                {% block panel %}{% endblock %}
+            </section>
+            <section id="map" class="cursor-grabbing h-screen">
+            </section>
+        </div>
+    </body>
 </html>

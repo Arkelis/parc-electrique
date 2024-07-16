@@ -1,87 +1,67 @@
 {% load static %}
-
 <nav class="font-sans text-sm mb-4 flex justify-between">
-  <div>
-    <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel"
-      >Géowatt</a
-    >
-    {% if region %} /
-    <a
-      class="hover:underline cursor-pointer"
-      hx-get="/{{ region.slug }}"
-      href="/{{ region.slug }}"
-      hx-target="#panel"
-      >{{ region.nom }}</a
-    >{% endif %} / <span class="capitalize">{{ plant.production_mode }}</span>
-  </div>
-  <parc-elec-panel-trigger class="md:hidden">
+    <div>
+        <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
+        {% if region %}
+            /
+            <a class="hover:underline cursor-pointer"
+               hx-get="/{{ region.slug }}"
+               href="/{{ region.slug }}"
+               hx-target="#panel">{{ region.nom }}</a>
+        {% endif %}
+        / <span class="capitalize">{{ plant.production_mode }}</span>
+    </div>
+    <parc-elec-panel-trigger class="md:hidden">
     <button type="button" class="hover:underline">
-      <span class="sr-only">Retour à la carte</span>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        aria-hidden="true"
-        class="h-6 w-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M6 18L18 6M6 6l12 12"
-        ></path>
-      </svg>
+        <span class="sr-only">Retour à la carte</span>
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             aria-hidden="true"
+             class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
     </button>
-  </parc-elec-panel-trigger>
+    </parc-elec-panel-trigger>
 </nav>
-
 <div class="flex gap-2 items-center mb-4">
-  <img class="w-12 h-12" src="{% static plant.icon_path %}" />
-  <h1 class="text-lg font-bold uppercase">{{ plant.name }}</h1>
+    <img class="w-12 h-12" src="{% static plant.icon_path %}" />
+    <h1 class="text-lg font-bold uppercase">{{ plant.name }}</h1>
 </div>
-
 <h2 class="font-bold text-l mt-4">Informations générales</h2>
 <p>Mode de production : {{ plant.production_mode }}</p>
 <p>Puissance installée : {{ plant.output }}</p>
-{% if plant.operator %}
-<p>Opérateur : {{ plant.operator }}</p>
-{% endif %}
-
+{% if plant.operator %}<p>Opérateur : {{ plant.operator }}</p>{% endif %}
 <p>
-  <a href="{{ plant.openstreetmap_url }}" target="_blank" class="underline"
-    >Voir sur OpenStreetMap</a
-  >
+    <a href="{{ plant.openstreetmap_url }}"
+       target="_blank"
+       class="underline">Voir sur OpenStreetMap</a>
 </p>
-
 {% if plant.wikipedia %}
-<p>
-  <a href="{{ plant.wikipedia_url }}" target="_blank" class="underline"
-    >Voir sur Wikipédia</a
-  >
-</p>
-{% endif %} {% if plant.wikidata %}
-<p>
-  <a href="{{ plant.wikidata_url }}" target="_blank" class="underline"
-    >Voir sur Wikidata</a
-  >
-</p>
-{% endif %} {% if plant.eic_list %}
-<h2 class="font-bold text-l mt-4">Tranches</h2>
-<ul>
-  {% for capacity in capacities %}
-  <li>{{ capacity.name }} - {{ capacity.output }} MW</li>
-  {% endfor %}
-</ul>
-
-<h2 class="font-bold text-l mt-4">Production</h2>
-<p>Puissance délivrée en MW par tranche lors des huit dernières heures</p>
-{{ production.labels | json_script:"chart-labels" }}
-{{ production.datasets | json_script:"chart-datasets" }}
-<div class="h-[300px] py-4 max-w-[calc(100vw_-_2rem)]">
-  <canvas id="production-graph"></canvas>
-</div>
-<script>
+    <p>
+        <a href="{{ plant.wikipedia_url }}" target="_blank" class="underline">Voir sur Wikipédia</a>
+    </p>
+{% endif %}
+{% if plant.wikidata %}
+    <p>
+        <a href="{{ plant.wikidata_url }}" target="_blank" class="underline">Voir sur Wikidata</a>
+    </p>
+{% endif %}
+{% if plant.eic_list %}
+    <h2 class="font-bold text-l mt-4">Tranches</h2>
+    <ul>
+        {% for capacity in capacities %}<li>{{ capacity.name }} - {{ capacity.output }} MW</li>{% endfor %}
+    </ul>
+    <h2 class="font-bold text-l mt-4">Production</h2>
+    <p>Puissance délivrée en MW par tranche lors des huit dernières heures</p>
+    {{ production.labels | json_script:"chart-labels" }}
+    {{ production.datasets | json_script:"chart-datasets" }}
+    <div class="h-[300px] py-4 max-w-[calc(100vw_-_2rem)]">
+        <canvas id="production-graph"></canvas>
+    </div>
+    <script>
   Chart.defaults.font.family = '"Source Sans 3"';
   new Chart(document.getElementById("production-graph"), {
     type: "line",
@@ -115,5 +95,5 @@
       },
     },
   });
-</script>
+    </script>
 {% endif %}

@@ -1,51 +1,40 @@
 {{ mix.labels | json_script:"chart-labels" }}
 {{ mix.datasets | json_script:"chart-datasets" }}
-
 <nav class="font-sans text-sm mb-2 flex justify-between">
-  <div>
-    <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel"
-      >Géowatt</a
-    >
-    / <span>{{ region.nom }}</span>
-  </div>
-  <parc-elec-panel-trigger class="md:hidden">
+    <div>
+        <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
+        / <span>{{ region.nom }}</span>
+    </div>
+    <parc-elec-panel-trigger class="md:hidden">
     <button type="button" class="hover:underline">
-      <span class="sr-only">Retour à la carte</span>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        aria-hidden="true"
-        class="h-6 w-6"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M6 18L18 6M6 6l12 12"
-        ></path>
-      </svg>
+        <span class="sr-only">Retour à la carte</span>
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             aria-hidden="true"
+             class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
     </button>
-  </parc-elec-panel-trigger>
+    </parc-elec-panel-trigger>
 </nav>
-
 <h1 class="text-lg font-bold uppercase">{{ region.nom }}</h1>
-
 <h2 class="font-bold text-l mt-4">Mix électrique régional</h2>
 <p>
-  Puissance délivrée en MW par type de production lors des huit dernières heures
-  dans la région {{ region.nom }}
+    Puissance délivrée en MW par type de production lors des huit dernières heures
+    dans la région {{ region.nom }}
 </p>
 <div class="h-[500px] py-4 max-w-[calc(100vw_-_2rem)]">
-  <canvas id="mix-graph"></canvas>
+    <canvas id="mix-graph"></canvas>
 </div>
 <p>
-  Ces données sont founris par RTE, le réseau de transport d'électricité. Plus
-  de détails sur l'application
-  <a class="underline" href="https://www.rte-france.com/eco2mix" target="_blank"
-    >éCO<sub>2</sub>mix</a
-  >.
+    Ces données sont founris par RTE, le réseau de transport d'électricité. Plus
+    de détails sur l'application
+    <a class="underline"
+       href="https://www.rte-france.com/eco2mix"
+       target="_blank">éCO<sub>2</sub>mix</a>.
 </p>
 <script>
   Chart.defaults.font.family = '"Source Sans 3"';
