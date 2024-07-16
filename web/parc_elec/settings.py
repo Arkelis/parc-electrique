@@ -27,7 +27,6 @@ if production_host := os.getenv("PARC_ELEC_FR_HOST"):
 INSTALLED_APPS = [
     app
     for app in [
-        "django.contrib.admin",
         "django.contrib.auth",
         "django.contrib.contenttypes",
         "django.contrib.sessions",
