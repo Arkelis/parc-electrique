@@ -33,7 +33,7 @@
             </button>
             </parc-elec-panel-trigger>
             <section id="panel"
-                     class="min-h-screen w-full absolute bg-white offset-0 md:relative z-20 shadow-xl p-4 {% if not show_panel %}hidden{% endif %} md:block"
+                     class="min-h-screen w-full overflow-y-auto [scrollbar-width:thin] [scrollbar-color:lightgrey_transparent] absolute bg-white offset-0 md:relative z-20 shadow-xl p-4 {% if not show_panel %}hidden{% endif %} md:block"
                      hx-push-url="true">
                 {% block panel %}{% endblock %}
             </section>
