@@ -5,20 +5,7 @@
         <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
         / <span>{{ region.nom }}</span>
     </div>
-    <parc-elec-panel-trigger class="md:hidden">
-    <button type="button" class="hover:underline">
-        <span class="sr-only">Retour à la carte</span>
-        <svg xmlns="http://www.w3.org/2000/svg"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke-width="1.5"
-             stroke="currentColor"
-             aria-hidden="true"
-             class="h-6 w-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-    </button>
-    </parc-elec-panel-trigger>
+    {% include "power_plants/components/close_panel_button.html" %}
 </nav>
 <h1 class="text-lg font-bold uppercase">{{ region.nom }}</h1>
 <h2 class="font-bold text-l mt-4">Mix électrique régional</h2>

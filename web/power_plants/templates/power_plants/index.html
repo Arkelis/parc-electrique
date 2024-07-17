@@ -1,25 +1,12 @@
 {{ mix.labels | json_script:"chart-labels" }}
 {{ mix.datasets | json_script:"chart-datasets" }}
 <div class="flex justify-between mb-3">
-    <h1 class="text-3xl font-light">Géowatt</h1>
-    <parc-elec-panel-trigger class="md:hidden">
-    <button type="button" class="hover:underline">
-        <span class="sr-only">Retour à la carte</span>
-        <svg xmlns="http://www.w3.org/2000/svg"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke-width="1.5"
-             stroke="currentColor"
-             aria-hidden="true"
-             class="h-6 w-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-    </button>
-    </parc-elec-panel-trigger>
+  <h1 class="text-3xl font-light">Géowatt</h1>
+  {% include "power_plants/components/close_panel_button.html" %}
 </div>
 <p>
-    Bienvenue sur la carte de France de production d'électricité. Cliquez sur une
-    centrale sur la carte pour obtenir ces caractéristiques.
+  Bienvenue sur la carte de France de production d'électricité. Cliquez sur une
+  centrale sur la carte pour obtenir ces caractéristiques.
 </p>
 <a hx-get="{% url 'about' %}"
    href="{% url 'about' %}"
@@ -28,14 +15,14 @@
 <h3 class="font-bold text-l mt-4">Mix énergétique français</h3>
 <p>Puissance délivrée en MW par type de production lors des huit dernières heures</p>
 <div class="h-[500px] py-4 max-w-[calc(100vw_-_2rem)]">
-    <canvas id="mix-graph"></canvas>
+  <canvas id="mix-graph"></canvas>
 </div>
 <p>
-    Ces données sont founris par RTE, le réseau de transport d'électricité. Plus
-    de détails sur l'application
-    <a class="underline"
-       href="https://www.rte-france.com/eco2mix"
-       target="_blank">éCO<sub>2</sub>mix</a>.
+  Ces données sont founris par RTE, le réseau de transport d'électricité. Plus
+  de détails sur l'application
+  <a class="underline"
+     href="https://www.rte-france.com/eco2mix"
+     target="_blank">éCO<sub>2</sub>mix</a>.
 </p>
 <script>
   Chart.defaults.font.family = '"Source Sans 3"';
