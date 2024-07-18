@@ -97,7 +97,7 @@ class PlantView(PanelView, template_name="power_plants/plant.html", show_panel=T
         eic_identifiers = plant_object.eic_list()
         capacities = PowerCapacity.objects.eic(eic_identifiers)
         production = PowerProduction.objects.eic(eic_identifiers).as_chart_payload()
-        region = Region.objects.defer_geometry().get(gid=plant_object.region_id)
+        region = Region.objects.defer_geometry().filter(gid=plant_object.region_id).first()
         return self.render(
             request,
             context={
