@@ -13,7 +13,7 @@ SELECT
   source,
   normalize_power(output)::bigint as output,
   ST_AsMVTGeom(ST_SimplifyPreserveTopology(geometry, !PIXEL_WIDTH! / 4), !BBOX!) as geom
-FROM osm_power_plants
+FROM power_plants
 WHERE geometry && !BBOX! AND name != ''
 """
 geometry_type = "Polygon"
@@ -27,7 +27,7 @@ SELECT
   source,
   normalize_power(output)::bigint as output,
   ST_AsMVTGeom(ST_Centroid(geometry), !BBOX!) AS geom
-FROM osm_power_plants
+FROM power_plants
 WHERE geometry && !BBOX! AND name != ''
 """
 geometry_type = "Point"

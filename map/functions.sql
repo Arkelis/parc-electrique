@@ -21,3 +21,23 @@ BEGIN
   RETURN val;
 END
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION simplify_boundary(g1 geometry)
+    RETURNS geometry
+    LANGUAGE plpgsql
+    IMMUTABLE STRICT
+    PARALLEL UNSAFE AS $$
+begin
+    return st_buffer(st_concavehull(g1, 0.95), 10);
+EXCEPTION
+    WHEN SQLSTATE 'XX000' THEN
+        RETURN st_buffer(g1, 10);
+end
+$$;
+
+CREATE MATERIALIZED VIEW power_plant_relations AS
+    SELECT rel.osm_id, simplify_boundary(ST_Collect(mem.geometry)) AS geometry, 
+        rel.name, rel.output, rel.source
+        FROM osm_power_plants_relations as rel, osm_power_plants_relation_members as mem
+        WHERE mem.osm_id = rel.osm_id
+        GROUP BY rel.osm_id, rel.name, rel.output, rel.source;
