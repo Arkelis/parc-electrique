@@ -12,6 +12,7 @@ from power_plants.models import PowerCapacity
 from power_plants.models import PowerProduction
 from power_plants.models import PowerMix
 from power_plants.models import Region
+from power_plants.models import PlantRegion
 from power_plants.models.plant import ENERGY_STYLES, POWER_PLANT_FAMILIES
 
 
@@ -92,12 +93,13 @@ class AboutView(PanelView, template_name="power_plants/about.html", show_panel=T
 
 
 class PlantView(PanelView, template_name="power_plants/plant.html", show_panel=True):
-    def __call__(self, request: HttpRequest, osm_id: int):
+    def __call__(self, request: HttpRequest, osm_id: str):
         plant_object = get_object_or_404(PowerPlant, osm_id=osm_id)
         eic_identifiers = plant_object.eic_list()
         capacities = PowerCapacity.objects.eic(eic_identifiers)
         production = PowerProduction.objects.eic(eic_identifiers).as_chart_payload()
-        region = Region.objects.defer_geometry().filter(gid=plant_object.region_id).first()
+        plant_region = PlantRegion.objects.filter(plant_id=osm_id).first()
+        region = Region.objects.defer_geometry().filter(gid=plant_region.region_id).first() if plant_region else None
         return self.render(
             request,
             context={

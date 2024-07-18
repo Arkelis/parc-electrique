@@ -14,8 +14,6 @@ class RegionQuerySet(models.QuerySet):
 
 
 class Region(models.Model):
-    # The composite primary key (osm_id, id) found, that is not supported.
-    # The first column is selected.
     gid = models.BigIntegerField(primary_key=True)
     nom = models.CharField()
     wikipedia = models.CharField()

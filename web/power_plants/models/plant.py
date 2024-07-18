@@ -89,7 +89,7 @@ ENERGY_STYLES = {
 class PowerPlant(models.Model):
     # The composite primary key (osm_id, id) found, that is not supported.
     # The first column is selected.
-    id = models.BigIntegerField()
+    # id = models.BigIntegerField()
     osm_id = models.BigIntegerField(primary_key=True)
     output = models.CharField(blank=True, null=True)
     source = models.CharField(blank=True, null=True)
@@ -101,14 +101,12 @@ class PowerPlant(models.Model):
     operator_wikidata = models.CharField(blank=True, null=True)
     operator_wikipedia = models.CharField(blank=True, null=True)
     geometry = models.MultiPolygonField(blank=True, null=True, srid=3857)
-    region = models.ForeignKey(to='Region', on_delete=models.DO_NOTHING, db_column='region_gid', null=True)
 
     objects = PowerPlantManager()
 
     class Meta:
         managed = False
-        db_table = "osm_power_plants"
-        unique_together = (("osm_id", "id"),)
+        db_table = "power_plants"
         verbose_name = 'centrale'
 
     def __str__(self):
