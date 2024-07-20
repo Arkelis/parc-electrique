@@ -1,8 +1,10 @@
 from django.contrib.gis.db import models
 from django.db.models.expressions import RawSQL
+from loguru import logger
 
 from parc_elec.wikidata import fetch_eic_identifiers
 from power_plants.models.region import Region
+from power_plants.models.plant_region import PlantRegion
 
 
 class PowerPlantManager(models.Manager):
@@ -159,12 +161,15 @@ class PowerPlant(models.Model):
 
     @classmethod
     def assign_regions(cls):
-        for power_plant in cls.objects.all():
-            if power_plant.region:
-                next
-
-            print("assigning", power_plant.name)
-            power_plant.region = Region.objects.filter(
+        plant_regions = PlantRegion.objects.values_list("plant_id")
+        for power_plant in cls.objects.exclude(osm_id__in=plant_regions):
+            logger.info(f"Assigning power plant {power_plant.name} to a region")
+            region = Region.objects.filter(
                 geom__intersects=power_plant.geometry
             ).first()
-            power_plant.save()
+
+            if region:
+                PlantRegion.objects.create(plant_id=power_plant.osm_id, region_id=region.gid)
+                logger.info(f"Assigned power plant {power_plant.name} to {region.nom}")
+            else:
+                logger.info(f"No region found for {power_plant.name} ")

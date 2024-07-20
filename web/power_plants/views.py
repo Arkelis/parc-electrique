@@ -29,7 +29,11 @@ def _template_from_string(template_str):
 
 class PanelView:
     def __init_subclass__(cls, template_name: str, show_panel: bool = False):
-        cls.show_panel = show_panel
+        cls.default_context = {
+            "show_panel": show_panel,
+            "families": POWER_PLANT_FAMILIES,
+            "styles": ENERGY_STYLES,
+        }
         cls.panel_template = get_template(template_name)
         cls.page_template = _template_from_string(
             f"""
@@ -40,31 +44,21 @@ class PanelView:
         """
         )
 
-    def render(self, request, context):
+    def render(self, request, context={}):
         template = self.panel_template if request.htmx else self.page_template
-        context = {"show_panel": self.show_panel, **context}
+        context = {**self.default_context, **context}
         return HttpResponse(template.render(context, request))
 
 
 class IndexView(PanelView, template_name="power_plants/index.html"):
     def __call__(self, request: HttpRequest):
         mix = PowerMix.objects.national().all_types().as_chart_payload()
-        return self.render(
-            request,
-            context={
-                "families": POWER_PLANT_FAMILIES,
-                "styles": ENERGY_STYLES,
-                "mix": mix,
-            },
-        )
+        return self.render(request, context={"mix": mix})
 
 
 class AboutView(PanelView, template_name="power_plants/about.html", show_panel=True):
     def __call__(self, request: HttpRequest):
-        return self.render(
-            request,
-            context={"show_panel": True},
-        )
+        return self.render(request)
 
 
 class PlantView(PanelView, template_name="power_plants/plant.html", show_panel=True):
@@ -74,12 +68,14 @@ class PlantView(PanelView, template_name="power_plants/plant.html", show_panel=T
         capacities = PowerCapacity.objects.eic(eic_identifiers)
         production = PowerProduction.objects.eic(eic_identifiers).as_chart_payload()
         plant_region = PlantRegion.objects.filter(plant_id=osm_id).first()
-        region = Region.objects.defer_geometry().filter(gid=plant_region.region_id).first() if plant_region else None
+        region = (
+            Region.objects.defer_geometry().filter(gid=plant_region.region_id).first()
+            if plant_region
+            else None
+        )
         return self.render(
             request,
             context={
-                "families": POWER_PLANT_FAMILIES,
-                "styles": ENERGY_STYLES,
                 "plant": plant_object,
                 "capacities": capacities,
                 "production": production,
@@ -100,12 +96,4 @@ class RegionView(PanelView, template_name="power_plants/region.html", show_panel
             .region(region_object.code_insee)
             .as_chart_payload()
         )
-        return self.render(
-            request,
-            context={
-                "families": POWER_PLANT_FAMILIES,
-                "styles": ENERGY_STYLES,
-                "region": region_object,
-                "mix": mix,
-            },
-        )
+        return self.render(request, context={"region": region_object, "mix": mix})
