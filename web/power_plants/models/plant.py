@@ -45,7 +45,7 @@ POWER_PLANT_FAMILIES = {
     "tidal": "hydro",
     "wind": "wind",
     "solar": "solar",
-    "waste": "fossil"
+    "waste": "fossil",
 }
 
 POWER_PLANT_MIX = {
@@ -53,11 +53,15 @@ POWER_PLANT_MIX = {
     "oil": "FOSSIL_OIL",
     "gas": "FOSSIL_GAS",
     "coal": "FOSSIL_HARD_COAL",
-    "hydro": ["HYDRO_PUMPED_STORAGE", "HYDRO_RUN_OF_RIVER_AND_POUNDAGE", "HYDRO_WATER_RESERVOIR"],
+    "hydro": [
+        "HYDRO_PUMPED_STORAGE",
+        "HYDRO_RUN_OF_RIVER_AND_POUNDAGE",
+        "HYDRO_WATER_RESERVOIR",
+    ],
     "tidal": "hydro",
     "wind": "wind",
     "solar": "solar",
-    "waste": "fossil"
+    "waste": "fossil",
 }
 
 ENERGY_LABELS = {
@@ -107,7 +111,7 @@ class PowerPlant(models.Model):
     class Meta:
         managed = False
         db_table = "power_plants"
-        verbose_name = 'centrale'
+        verbose_name = "centrale"
 
     def __str__(self):
         return self.name or self.short_name or f"Centrale #{self.osm_id}"
@@ -131,7 +135,11 @@ class PowerPlant(models.Model):
 
     @property
     def openstreetmap_url(self):
-        return f"https://openstreetmap.org/way/{self.osm_id}"
+        return (
+            f"https://openstreetmap.org/relation/{-self.osm_id}"
+            if self.osm_id < 0
+            else f"https://openstreetmap.org/way/{self.osm_id}"
+        )
 
     @property
     def wikipedia_url(self):
@@ -144,15 +152,19 @@ class PowerPlant(models.Model):
 
     @property
     def production_mode(self):
-        display_sources = (POWER_PLANT_SOURCES.get(s, s) for s in self._sources_as_list())
+        display_sources = (
+            POWER_PLANT_SOURCES.get(s, s) for s in self._sources_as_list()
+        )
         return ", ".join(display_sources)
-    
+
     @classmethod
     def assign_regions(cls):
         for power_plant in cls.objects.all():
             if power_plant.region:
                 next
 
-            print('assigning', power_plant.name)
-            power_plant.region = Region.objects.filter(geom__intersects=power_plant.geometry).first()
+            print("assigning", power_plant.name)
+            power_plant.region = Region.objects.filter(
+                geom__intersects=power_plant.geometry
+            ).first()
             power_plant.save()

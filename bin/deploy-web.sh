@@ -1,0 +1,2 @@
+cd web
+fly deploy

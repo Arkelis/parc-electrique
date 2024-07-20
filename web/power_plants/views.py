@@ -1,6 +1,4 @@
-from typing import Optional
-
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.template.loader import engines
@@ -27,29 +25,6 @@ def _template_from_string(template_str):
         except TemplateSyntaxError as e:
             chain.append(e)
     raise TemplateSyntaxError(template_str, chain=chain)
-
-
-def _render_htmx(
-    request: HttpRequest, template_name: str, context: Optional[dict] = None
-):
-    return render(
-        request,
-        template_name if request.htmx else template_name.replace("html", "page.html"),
-        context,
-    )
-
-
-def index(request: HttpRequest):
-    mix = PowerMix.objects.national().all_types().as_chart_payload()
-    return _render_htmx(
-        request,
-        "power_plants/index.html",
-        context={
-            "families": POWER_PLANT_FAMILIES,
-            "styles": ENERGY_STYLES,
-            "mix": mix,
-        },
-    )
 
 
 class PanelView:
@@ -113,7 +88,7 @@ class PlantView(PanelView, template_name="power_plants/plant.html", show_panel=T
         )
 
 
-class RegionView(PanelView, template_name="power_plants/plant.html", show_panel=True):
+class RegionView(PanelView, template_name="power_plants/region.html", show_panel=True):
     def __call__(self, request: HttpRequest, region_slug: str):
         try:
             region_object = Region.objects.defer_geometry().get_slug(region_slug)

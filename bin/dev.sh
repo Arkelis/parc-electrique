@@ -1,13 +1,16 @@
 function launch_map {
-    cd map && tegola serve --config tegola.toml
+    cd map
+    env $(grep -v '^#' ../.env | xargs) tegola serve --config tegola.toml
 }
 
 function launch_node {
-    cd app && npm run dev
+    cd app
+    env $(grep -v '^#' .env.local | xargs) npm run dev
 }
 
 function launch_django {
-    cd web && poetry run python manage.py runserver
+    cd web
+    env $(grep -v '^#' ../.env | xargs) poetry run python manage.py runserver
 }
 
 
