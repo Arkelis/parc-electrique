@@ -1,45 +1,72 @@
+from collections import namedtuple
+from collections import defaultdict
+import sys
+
 from django.core.cache import cache
-import requests
+from SPARQLWrapper import SPARQLWrapper, JSON
 
 
-WIKIDATA_API_ENDPOINT = "https://www.wikidata.org/w/rest.php/wikibase/v0/entities/items/{}/statements?property=P8645"
+WIKIDATA_SPARQL_ENDPOINT = "https://query.wikidata.org/sparql"
+WIKIDATA_SPARQL_QUERY = """
+    SELECT ?eic ?item WHERE {{
+    VALUES ?item {{ {wikidata_ids} }}
+    OPTIONAL {{ ?item wdt:P8645 ?eic. }}
+    }}
+"""
 USER_AGENT = (
     "parc-elec/0.0 "
     "(https://pycolore.fr; guillaume.fayard@pycolore.fr) "
     "Python/{}.{}"
 )
 
-
-def _get_eic_from_payload(payload: dict):
-    return payload.get("value", {}).get("content")
+EicTuple = namedtuple("EicTuple", ["qid", "eic"])
 
 
-def _get_results_from_wikidata(entity_id: str):
-    wikidata_response = requests.get(
-        url=WIKIDATA_API_ENDPOINT.format(entity_id), headers={"User-Agent": USER_AGENT}
+def _get_results_from_wikidata(wikidata_ids: list[str]):
+    user_agent = USER_AGENT.format(sys.version_info[0], sys.version_info[1])
+    formatted_ids = " ".join(f"wd:{qid}" for qid in wikidata_ids)
+
+    sparql = SPARQLWrapper(WIKIDATA_SPARQL_ENDPOINT, agent=user_agent)
+    sparql.setQuery(WIKIDATA_SPARQL_QUERY.format(wikidata_ids=formatted_ids))
+    sparql.setReturnFormat(JSON)
+
+    json_response = sparql.query().convert()
+
+    return json_response["results"]["bindings"]
+
+
+def _qid_from_url(url):
+    return url.removeprefix("http://www.wikidata.org/entity/")
+
+
+def _result_to_tuple(sparql_row):
+    return EicTuple(
+        _qid_from_url(sparql_row["item"]["value"]), sparql_row["eic"]["value"]
     )
-    json_response = wikidata_response.json()
-
-    if not (code_payload_list := json_response.get("P8645")):
-        return []
-
-    return [
-        code
-        for payload in code_payload_list
-        if (code := payload.get("value", {}).get("content")) is not None
-    ]
 
 
-def fetch_eic_identifiers(entity_id: str):
-    """Retrieve from Wikidata eic identifiers of the given element.
+def _tuples_to_dict(tuples):
+    """Group by QID
 
-    entity_id is the Wikidata id of the element.
-    Return a list of str.
+    Take [(QID, EIC1), (QID, EIC2), ...]
+    Return {QID: [EIC1, EIC2], ...}
     """
-    cache_key = f"wd:{entity_id}:eic"
-    if cached_value := cache.get(cache_key):
-        return cached_value
+    result = defaultdict(list)
+    for tuple in tuples:
+        qid, eic = tuple
+        result[qid].append(eic)
 
-    eic_identifiers = _get_results_from_wikidata(entity_id)
-    cache.set(cache_key, eic_identifiers, 3600 * 24)
-    return eic_identifiers
+    return result
+
+
+def fetch_eic_identifiers(wikidata_ids):
+    """Retrieve from Wikidata EIC identifiers of the all elements.
+
+    Take a list of wikidata ids (or QIDs)
+    Return a dict:
+    - keys are the qids
+    - values are the lists of EIC.
+    """
+    sparql_results = _get_results_from_wikidata(wikidata_ids)
+    plant_eic_tuples = [_result_to_tuple(row) for row in sparql_results]
+    return _tuples_to_dict(plant_eic_tuples)

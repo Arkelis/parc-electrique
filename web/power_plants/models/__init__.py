@@ -4,5 +4,14 @@ from power_plants.models.production import PowerProduction
 from power_plants.models.mix import PowerMix
 from power_plants.models.region import Region
 from power_plants.models.plant_region import PlantRegion
+from power_plants.models.plant_eic import PlantEic
 
-__all__ = ('PowerPlant', 'PowerCapacity', 'PowerProduction', 'PowerMix', 'Region', 'PlantRegion')
+__all__ = (
+    "PowerPlant",
+    "PowerCapacity",
+    "PowerProduction",
+    "PowerMix",
+    "Region",
+    "PlantRegion",
+    "PlantEic",
+)

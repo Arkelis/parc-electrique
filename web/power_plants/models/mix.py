@@ -133,7 +133,6 @@ class PowerMixImport:
                     "values": [],
                     "insee_code": region.code_insee,
                 }
-                logger.debug(region.code_insee)
                 for production in regional_mix["results"]:
                     logger.debug(production)
                     if production["code_insee_region"] == region.code_insee:

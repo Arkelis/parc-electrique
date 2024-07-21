@@ -17,6 +17,7 @@ django-vite = "^3.0.3"
 gunicorn="*"
 sentry-sdk = {extras = ["django"], version = "^2.7.1"}
 psycopg = {extras = ["binary"], version = "^3.2.1"}
+sparqlwrapper = "^2.0.0"
 
 
 [tool.poetry.group.dev.dependencies]

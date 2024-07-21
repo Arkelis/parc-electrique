@@ -1,5 +1,4 @@
 from django.contrib.gis.db import models
-from django.db.models.expressions import RawSQL
 from loguru import logger
 
 from parc_elec.wikidata import fetch_eic_identifiers
@@ -8,16 +7,8 @@ from power_plants.models.plant_region import PlantRegion
 
 
 class PowerPlantManager(models.Manager):
-    def for_map(self):
-        return self.with_normalized_output().with_name()
-
-    def with_normalized_output(self):
-        qs = self.annotate(normalized_output=RawSQL("normalize_power(output)", ()))
-        qs = qs.exclude(output__in=("", "yes", "no", "inconnu"))
-        return qs
-
-    def with_name(self):
-        return self.exclude(name="", short_name="")
+    def get_queryset(self):
+        return super().get_queryset().defer('geometry')
 
 
 POWER_PLANT_SOURCES = {

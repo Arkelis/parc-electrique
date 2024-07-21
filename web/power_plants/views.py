@@ -69,7 +69,7 @@ class PlantView(PanelView, template_name="power_plants/plant.html", show_panel=T
         production = PowerProduction.objects.eic(eic_identifiers).as_chart_payload()
         plant_region = PlantRegion.objects.filter(plant_id=osm_id).first()
         region = (
-            Region.objects.defer_geometry().filter(gid=plant_region.region_id).first()
+            Region.objects.filter(gid=plant_region.region_id).first()
             if plant_region
             else None
         )
@@ -87,7 +87,7 @@ class PlantView(PanelView, template_name="power_plants/plant.html", show_panel=T
 class RegionView(PanelView, template_name="power_plants/region.html", show_panel=True):
     def __call__(self, request: HttpRequest, region_slug: str):
         try:
-            region_object = Region.objects.defer_geometry().get_slug(region_slug)
+            region_object = Region.objects.get_slug(region_slug)
         except Region.DoesNotExist:
             return HttpResponse(status=404)
 
