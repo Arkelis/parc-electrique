@@ -4,6 +4,7 @@ from loguru import logger
 from parc_elec.wikidata import fetch_eic_identifiers
 from power_plants.models.region import Region
 from power_plants.models.plant_region import PlantRegion
+from power_plants.models.plant_eic import PlantEic
 
 
 class PowerPlantManager(models.Manager):
@@ -151,8 +152,24 @@ class PowerPlant(models.Model):
         return ", ".join(display_sources)
 
     @classmethod
-    def assign_regions(cls):
+    def link_regions(cls):
         plant_regions = PlantRegion.objects.values_list("plant_id")
+        for power_plant in cls.objects.exclude(osm_id__in=plant_regions):
+            logger.info(f"Assigning power plant {power_plant.name} to a region")
+            region = Region.objects.filter(
+                geom__intersects=power_plant.geometry
+            ).first()
+
+            if region:
+                PlantRegion.objects.create(plant_id=power_plant.osm_id, region_id=region.gid)
+                logger.info(f"Assigned power plant {power_plant.name} to {region.nom}")
+            else:
+                logger.info(f"No region found for {power_plant.name} ")
+
+    @classmethod
+    def link_eic(cls):
+        # TODO: to update
+        plant_eic = PlantEic.objects.values_list("")
         for power_plant in cls.objects.exclude(osm_id__in=plant_regions):
             logger.info(f"Assigning power plant {power_plant.name} to a region")
             region = Region.objects.filter(

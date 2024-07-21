@@ -4,7 +4,7 @@ from django.db.models.functions import Lower, Replace
 from django.utils.text import slugify
 
 
-class RegionManager(models.Manager):  
+class RegionManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().defer("geom")
 
