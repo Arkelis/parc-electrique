@@ -88,6 +88,8 @@ def get_db_settings():
                 "PASSWORD": os.getenv("PARC_ELEC_FR_DB_PASSWORD"),
                 "HOST": os.getenv("PARC_ELEC_FR_DB_HOST"),
                 "PORT": os.getenv("PARC_ELEC_FR_DB_PORT"),
+                "CONN_MAX_AGE": None,
+                "CONN_HEALTH_CHECKS": True,
             }
         }
 
