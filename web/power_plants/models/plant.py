@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.db import transaction
 from loguru import logger
 
 from parc_elec.wikidata import fetch_eic_identifiers
@@ -9,7 +10,7 @@ from power_plants.models.plant_eic import PlantEic
 
 class PowerPlantManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().defer('geometry')
+        return super().get_queryset().defer("geometry")
 
 
 POWER_PLANT_SOURCES = {
@@ -110,12 +111,10 @@ class PowerPlant(models.Model):
     def __str__(self):
         return self.name or self.short_name or f"Centrale #{self.osm_id}"
 
+    @property
     def eic_list(self):
-        """Energy identifier codes fetched from Wikidata"""
-        if not (self.wikidata):
-            return []
-
-        return fetch_eic_identifiers(self.wikidata)
+        plant_eics = PlantEic.objects.filter(plant_id=self.osm_id)
+        return list(plant_eics.values_list("eic", flat=True))
 
     def _sources_as_list(self):
         return self.source.split(";")
@@ -161,23 +160,27 @@ class PowerPlant(models.Model):
             ).first()
 
             if region:
-                PlantRegion.objects.create(plant_id=power_plant.osm_id, region_id=region.gid)
+                PlantRegion.objects.create(
+                    plant_id=power_plant.osm_id, region_id=region.gid
+                )
                 logger.info(f"Assigned power plant {power_plant.name} to {region.nom}")
             else:
                 logger.info(f"No region found for {power_plant.name} ")
 
     @classmethod
     def link_eic(cls):
-        # TODO: to update
-        plant_eic = PlantEic.objects.values_list("")
-        for power_plant in cls.objects.exclude(osm_id__in=plant_regions):
-            logger.info(f"Assigning power plant {power_plant.name} to a region")
-            region = Region.objects.filter(
-                geom__intersects=power_plant.geometry
-            ).first()
+        plants_with_wikidata = cls.objects.exclude(wikidata="")
+        eic_from_wikidata = fetch_eic_identifiers(
+            plants_with_wikidata.values_list("wikidata", flat=True)
+        )
+        wikidata_to_osm_map = dict(
+            plants_with_wikidata.values_list("wikidata", "osm_id")
+        )
+        eic_to_insert = [
+            PlantEic(eic=el.eic, plant_id=wikidata_to_osm_map[el.qid])
+            for el in eic_from_wikidata
+        ]
 
-            if region:
-                PlantRegion.objects.create(plant_id=power_plant.osm_id, region_id=region.gid)
-                logger.info(f"Assigned power plant {power_plant.name} to {region.nom}")
-            else:
-                logger.info(f"No region found for {power_plant.name} ")
+        with transaction.atomic():
+            PlantEic.objects.all().delete()
+            PlantEic.objects.bulk_create(eic_to_insert)

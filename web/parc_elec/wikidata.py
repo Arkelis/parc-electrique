@@ -1,6 +1,7 @@
 from collections import namedtuple
 from collections import defaultdict
 import sys
+from loguru import logger
 
 from django.core.cache import cache
 from SPARQLWrapper import SPARQLWrapper, JSON
@@ -40,23 +41,10 @@ def _qid_from_url(url):
 
 
 def _result_to_tuple(sparql_row):
+    logger.info(sparql_row)
     return EicTuple(
         _qid_from_url(sparql_row["item"]["value"]), sparql_row["eic"]["value"]
     )
-
-
-def _tuples_to_dict(tuples):
-    """Group by QID
-
-    Take [(QID, EIC1), (QID, EIC2), ...]
-    Return {QID: [EIC1, EIC2], ...}
-    """
-    result = defaultdict(list)
-    for tuple in tuples:
-        qid, eic = tuple
-        result[qid].append(eic)
-
-    return result
 
 
 def fetch_eic_identifiers(wikidata_ids):
@@ -68,5 +56,7 @@ def fetch_eic_identifiers(wikidata_ids):
     - values are the lists of EIC.
     """
     sparql_results = _get_results_from_wikidata(wikidata_ids)
-    plant_eic_tuples = [_result_to_tuple(row) for row in sparql_results]
-    return _tuples_to_dict(plant_eic_tuples)
+    plant_eic_tuples = [
+        _result_to_tuple(row) for row in sparql_results if row.get("eic")
+    ]
+    return plant_eic_tuples

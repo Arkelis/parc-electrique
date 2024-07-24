@@ -64,7 +64,7 @@ class AboutView(PanelView, template_name="power_plants/about.html", show_panel=T
 class PlantView(PanelView, template_name="power_plants/plant.html", show_panel=True):
     def __call__(self, request: HttpRequest, osm_id: str):
         plant_object = get_object_or_404(PowerPlant, osm_id=osm_id)
-        eic_identifiers = plant_object.eic_list()
+        eic_identifiers = plant_object.eic_list
         capacities = PowerCapacity.objects.eic(eic_identifiers)
         production = PowerProduction.objects.eic(eic_identifiers).as_chart_payload()
         plant_region = PlantRegion.objects.filter(plant_id=osm_id).first()
