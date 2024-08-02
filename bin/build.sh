@@ -8,6 +8,6 @@ echo "Preparing static files for web server"
 
 cd ../web
 rm -r static
-poetry run python manage.py collectstatic
+env $(grep -v '^#' ../.env | xargs) poetry run python manage.py collectstatic
 
 echo "Done!"
