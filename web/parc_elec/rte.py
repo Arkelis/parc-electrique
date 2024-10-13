@@ -25,7 +25,7 @@ def _get_access_token():
 
 
 def fetch_current_production_mix():
-    logger.debug("Fetching installed data")
+    logger.debug("Fetching mix")
 
     token = _get_access_token()
     response = requests.get(
@@ -35,9 +35,10 @@ def fetch_current_production_mix():
 
     logger.debug(f"Response status: {response.status_code}")
     if response.status_code != 200:
-        return
+        logger.error("Could not fetch mix data")
+        raise RuntimeError('Could not fetch data from RTE')
 
-    logger.debug("Installed data fetched")
+    logger.debug("Mix fetched")
 
     return response.json()
 
@@ -53,7 +54,8 @@ def fetch_current_production():
 
     logger.debug("Response status:", response.status_code)
     if response.status_code != 200:
-        return
+        logger.error("Could not fetch production data")
+        raise RuntimeError('Could not fetch data from RTE')
 
     logger.debug("Production data fetched")
 
@@ -71,7 +73,8 @@ def fetch_current_installed_capacity():
 
     logger.debug(f"Response status: {response.status_code}")
     if response.status_code != 200:
-        return
+        logger.error("Could not fetch capacity data")
+        raise RuntimeError('Could not fetch data from RTE')
 
     logger.debug("Installed data fetched")
 

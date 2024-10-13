@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.db import transaction
 
 from parc_elec import rte
 
@@ -24,9 +25,11 @@ class PowerCapacity(models.Model):
 
 class PowerCapacityImport:
     def bulk_create(self):
-        PowerCapacity.objects.bulk_create(
-            PowerCapacity(**row) for row in self.get_rows()
-        )
+        with transaction.atomic():
+            PowerCapacity.objects.all().delete()
+            PowerCapacity.objects.bulk_create(
+                PowerCapacity(**row) for row in self.get_rows()
+            )
 
     def get_rows(self):
         data = self.fetch_data_from_rte()

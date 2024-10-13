@@ -1,9 +1,7 @@
 from collections import namedtuple
-from collections import defaultdict
 import sys
 from loguru import logger
 
-from django.core.cache import cache
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 

@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.contrib.gis.db import models
 from django.db import transaction
-from loguru import logger
 
 from parc_elec import odre
 from power_plants.models.region import Region
@@ -134,7 +133,6 @@ class PowerMixImport:
                     "insee_code": region.code_insee,
                 }
                 for production in regional_mix["results"]:
-                    logger.debug(production)
                     if production["code_insee_region"] == region.code_insee:
                         row["values"].append(
                             {
