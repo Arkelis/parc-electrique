@@ -12,7 +12,7 @@
    href="{% url 'about' %}"
    hx-target="#panel"
    class="underline">À propos du site</a>
-<h3 class="font-bold text-l mt-4">Mix énergétique français</h3>
+<h3 class="font-bold text-l mt-4">Mix électrique français</h3>
 <p>Puissance délivrée en MW par type de production lors des huit dernières heures</p>
 <div class="h-[500px] py-4 max-w-[calc(100vw_-_2rem)]">
   <canvas id="mix-graph"></canvas>
@@ -25,6 +25,9 @@
      target="_blank">éCO<sub>2</sub>mix</a>.
 </p>
 <script>
+  console.log(JSON.parse(
+        document.getElementById("chart-labels").textContent
+      ))
   Chart.defaults.font.family = '"Source Sans 3"';
   new Chart(document.getElementById("mix-graph"), {
     type: "line",
@@ -44,7 +47,6 @@
       scales: {
         y: {
           stacked: true,
-          //beginAtZero: false,
         },
       },
       plugins: {

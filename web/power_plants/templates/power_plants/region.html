@@ -2,8 +2,8 @@
 {{ mix.datasets | json_script:"chart-datasets" }}
 <nav class="font-sans text-sm mb-2 flex justify-between">
     <div>
-        <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
-        / <span>{{ region.nom }}</span>
+      <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">France</a>
+      / <span>{{ region.nom }}</span>
     </div>
     {% include "power_plants/components/close_panel_button.html" %}
 </nav>

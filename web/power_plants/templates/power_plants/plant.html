@@ -1,15 +1,15 @@
 {% load static %}
 <nav class="font-sans text-sm mb-4 flex justify-between">
     <div>
-        <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">Géowatt</a>
+        <a class="hover:underline cursor-pointer" hx-get="/" hx-target="#panel">France</a>
         {% if region %}
             /
             <a class="hover:underline cursor-pointer"
-               hx-get="/{{ region.slug }}"
-               href="/{{ region.slug }}"
+               hx-get="/region/{{ region.slug }}"
+               href="/region/{{ region.slug }}"
                hx-target="#panel">{{ region.nom }}</a>
         {% endif %}
-        / <span class="capitalize">{{ plant.production_mode }}</span>
+        <!-- / <span class="capitalize">{{ plant.production_mode }}</span> -->
     </div>
     {% include "power_plants/components/close_panel_button.html" %}
 </nav>
@@ -17,7 +17,6 @@
     <img class="w-12 h-12" src="{% static plant.icon_path %}" />
     <h1 class="text-lg font-bold uppercase">{{ plant.name }}</h1>
 </div>
-<h2 class="font-bold text-l mt-4">Informations générales</h2>
 <p>Mode de production : {{ plant.production_mode }}</p>
 <p>Puissance installée : {{ plant.output }}</p>
 {% if plant.operator %}<p>Opérateur : {{ plant.operator }}</p>{% endif %}
@@ -36,8 +35,8 @@
         <a href="{{ plant.wikidata_url }}" target="_blank" class="underline">Voir sur Wikidata</a>
     </p>
 {% endif %}
-{% if plant.eic_list %}
-    <h2 class="font-bold text-l mt-4">Tranches</h2>
+{% if production.labels %}
+    <h2 class="font-bold text-l mt-4">Unités de production</h2>
     <ul>
         {% for capacity in capacities %}<li>{{ capacity.name }} - {{ capacity.output }} MW</li>{% endfor %}
     </ul>

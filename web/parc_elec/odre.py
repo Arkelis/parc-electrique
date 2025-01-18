@@ -41,9 +41,9 @@ def fetch_eco2mix_regional():
 
 def _query():
     return (f"where=consommation IS NOT NULL AND date_heure > '{_a_day_ago().isoformat()}' AND heure like '%:00'"
-             "&order_by=date_heure DESC"
+             "&order_by=date_heure ASC"
              "&limit=-1")
 
 
 def _a_day_ago():
-    return datetime.now() - timedelta(hours=24)
+    return datetime.now() - timedelta(hours=8)
