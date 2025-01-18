@@ -1,8 +1,8 @@
 import os
-import json
 
 from loguru import logger
 import requests
+from requests.adapters import HTTPAdapter, Retry
 from requests.auth import HTTPBasicAuth
 
 CLIENT_ID = os.getenv("PARC_ELEC_FR_RTE_CLIENT_ID")
@@ -36,7 +36,7 @@ def fetch_current_production_mix():
     logger.debug(f"Response status: {response.status_code}")
     if response.status_code != 200:
         logger.error("Could not fetch mix data")
-        raise RuntimeError('Could not fetch data from RTE')
+        raise RuntimeError("Could not fetch data from RTE")
 
     logger.debug("Mix fetched")
 
@@ -47,15 +47,20 @@ def fetch_current_production():
     logger.debug("Fetching production data")
 
     token = _get_access_token()
-    response = requests.get(
+    s = requests.Session()
+    retries = Retry(total=10, backoff_factor=0.5, status_forcelist=[500, 502])
+    s.mount(
+        "https://digital.iservices.rte-france.com",
+        adapter=HTTPAdapter(max_retries=retries),
+    )
+    response = s.get(
         "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/actual_generations_per_unit",
         headers={"Authorization": f"Bearer {token}"},
     )
 
     logger.debug("Response status:", response.status_code)
     if response.status_code != 200:
-        logger.error("Could not fetch production data")
-        raise RuntimeError('Could not fetch data from RTE')
+        raise RuntimeError("Could not fetch data from RTE")
 
     logger.debug("Production data fetched")
 
@@ -66,15 +71,19 @@ def fetch_current_installed_capacity():
     logger.debug("Fetching installed data")
 
     token = _get_access_token()
-    response = requests.get(
+    s = requests.Session()
+    retries = Retry(total=10, backoff_factor=0.5, status_forcelist=[500, 502])
+    s.mount(
+        "https://digital.iservices.rte-france.com", adapter=HTTPAdapter(max_retries=retries)
+    )
+    response = s.get.get(
         "https://digital.iservices.rte-france.com/open_api/generation_installed_capacities/v1/capacities_per_production_unit",
         headers={"Authorization": f"Bearer {token}"},
     )
 
     logger.debug(f"Response status: {response.status_code}")
     if response.status_code != 200:
-        logger.error("Could not fetch capacity data")
-        raise RuntimeError('Could not fetch data from RTE')
+        raise RuntimeError("Could not fetch data from RTE")
 
     logger.debug("Installed data fetched")
 

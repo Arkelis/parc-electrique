@@ -12,6 +12,7 @@ DEBUG = str(os.getenv("PARC_ELEC_FR_ENV_PRODUCTION")) != "1"
 
 if (sentry_dsn := os.getenv("PARC_ELEC_FR_SENTRY_DSN")) and not DEBUG:
     import sentry_sdk
+
     sentry_sdk.init(
         dsn=sentry_dsn,
         traces_sample_rate=1.0,

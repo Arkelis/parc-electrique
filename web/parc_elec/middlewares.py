@@ -3,5 +3,5 @@ class HTMXMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request.htmx = request.headers.get('HX-Request') == 'true'
+        request.htmx = request.headers.get("HX-Request") == "true"
         return self.get_response(request)

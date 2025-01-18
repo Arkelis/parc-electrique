@@ -101,7 +101,7 @@ class PowerMix(models.Model):
     def datetime_to_hour(dt_string):
         dt = datetime.fromisoformat(dt_string)
         return dt.strftime("%Hh").removeprefix("0")
-    
+
 
 class PowerMixImport:
     def bulk_create(self):

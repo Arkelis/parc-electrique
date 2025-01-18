@@ -104,7 +104,7 @@ class RegionView(PanelView, template_name="power_plants/region.html", show_panel
 
 def pgview(function):
     def view_called_by_postgres(request):
-        if (pg_key := request.headers.get('X-PG-Key')) is None:
+        if (pg_key := request.headers.get("X-PG-Key")) is None:
             return HttpResponse(status=401)
         if pg_key != os.environ["PARC_ELEC_FR_PG_TOKEN"]:
             return HttpResponse(status=401)
@@ -117,11 +117,7 @@ def pgview(function):
 @pgview
 def update_production(request):
     PowerMix.import_from_rte()
-    time.sleep(5)
     PowerProduction.import_from_rte()
-    time.sleep(5)
     PowerCapacity.import_from_rte()
-    time.sleep(5)
     PowerPlant.link_eic()
-    time.sleep(5)
     return HttpResponse(status=200)

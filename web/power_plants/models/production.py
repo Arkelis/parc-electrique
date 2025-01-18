@@ -13,7 +13,7 @@ class PowerProductionQuerySet(models.QuerySet):
     def as_chart_payload(self):
         if not (objects := list(self)):
             return {"datasets": [], "labels": []}
-        
+
         return {
             "datasets": [
                 {"label": i.name, "data": i.values_list, "fill": "stack"}
