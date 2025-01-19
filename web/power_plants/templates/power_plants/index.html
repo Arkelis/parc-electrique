@@ -25,9 +25,7 @@
      target="_blank">éCO<sub>2</sub>mix</a>.
 </p>
 <script>
-  console.log(JSON.parse(
-        document.getElementById("chart-labels").textContent
-      ))
+
   Chart.defaults.font.family = '"Source Sans 3"';
   new Chart(document.getElementById("mix-graph"), {
     type: "line",
@@ -47,6 +45,7 @@
       scales: {
         y: {
           stacked: true,
+          beginAtZero: true,
         },
       },
       plugins: {

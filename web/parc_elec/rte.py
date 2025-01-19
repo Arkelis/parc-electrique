@@ -36,7 +36,7 @@ def fetch_current_production_mix():
     logger.debug(f"Response status: {response.status_code}")
     if response.status_code != 200:
         logger.error("Could not fetch mix data")
-        raise RuntimeError("Could not fetch data from RTE")
+        raise RuntimeError("Could not fetch mix from RTE")
 
     logger.debug("Mix fetched")
 
@@ -60,7 +60,7 @@ def fetch_current_production():
 
     logger.debug("Response status:", response.status_code)
     if response.status_code != 200:
-        raise RuntimeError("Could not fetch data from RTE")
+        raise RuntimeError("Could not fetch production from RTE")
 
     logger.debug("Production data fetched")
 
@@ -76,14 +76,14 @@ def fetch_current_installed_capacity():
     s.mount(
         "https://digital.iservices.rte-france.com", adapter=HTTPAdapter(max_retries=retries)
     )
-    response = s.get.get(
+    response = s.get(
         "https://digital.iservices.rte-france.com/open_api/generation_installed_capacities/v1/capacities_per_production_unit",
         headers={"Authorization": f"Bearer {token}"},
     )
 
     logger.debug(f"Response status: {response.status_code}")
     if response.status_code != 200:
-        raise RuntimeError("Could not fetch data from RTE")
+        raise RuntimeError("Could not fetch installed capacity from RTE")
 
     logger.debug("Installed data fetched")
 
