@@ -13,5 +13,9 @@ plusieurs parties :
 ## Sources de données
 
 - Fond de carte : tuiles vectorielles issues des [Géoservices IGN](https://geoservices.ign.fr/services-web-essentiels)
-- Données géographiques sur les centrales électriques : [OpenStreetMap](https://www.openstreetmap.org/)
+- Données géographiques sur les centrales électriques : [OpenStreetMap](https://www.openstreetmap.org/), [Wikidata](https://www.wikidata.org)
 - Données de production électrique : RTE
+
+## Icones
+
+Les icônes utilisées proviennent de la bibliothèque [OpenMoji](https://openmoji.org/)
