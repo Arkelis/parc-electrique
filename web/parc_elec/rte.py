@@ -26,7 +26,7 @@ def _get_access_token(session):
 
 def _get_session():
     session = requests.Session()
-    retries = Retry(total=10, backoff_factor=0.1, status_forcelist=[500, 502])
+    retries = Retry(total=10, backoff_factor=0.2, status_forcelist=[500, 502])
     session.mount(
         "https://digital.iservices.rte-france.com",
         adapter=HTTPAdapter(max_retries=retries),
